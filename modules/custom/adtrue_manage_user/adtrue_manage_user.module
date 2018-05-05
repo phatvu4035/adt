@@ -1,0 +1,44 @@
+<?php
+include_once drupal_get_path('module','adtrue_manage_user').'/inc/adtrue_manage_user.inc';
+
+function adtrue_manage_user_permission() {
+	$permissions['adtrue manage user by list'] = array(
+        'title' => t('Quyền quản lí user'),
+        'description' => t('Quyền quản lí  user'),
+    );
+    $permissions['adtrue create user'] = array(
+        'title' => t('Quyền thêm người dùng'),
+        'description' => t('Quyền thêm người dùng'),
+    );
+    $permissions['adtrue delete user'] = array(
+        'title' => t('Quyền xóa người dùng'),
+        'description' => t('Quyền quản lí người dùng'),
+    );
+    $permissions['adtrue edit user'] = array(
+        'title' => t('Quyền sửa người dùng'),
+        'description' => t('Quyền sửa người dùng'),
+    );
+    $permissions['adtrue manage role user'] = array(
+        'title' => t('Quyền quản lí roles cho người dùng'),
+        'description' => t('Quyền quản lí roles cho người dùng'),
+    );
+    $permissions['adtrue view profile user'] = array(
+        'title' => t('Quyền xem người dùng'),
+        'description' => t('Quyền xem thông tin người dùng'),
+    );
+
+    return $permissions;
+}
+
+function adtrue_manage_user_menu() {
+	$items = array();
+    $items['profile/user/%/view'] = array(
+        'title' => 'Thông tin người dùng',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('adtrue_manage_view_user',2),
+        'access arguments' => array('adtrue view profile user'),
+        'type' => MENU_NORMAL_ITEM
+    );
+	
+	return $items;
+}

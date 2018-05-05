@@ -1,0 +1,5 @@
+name = mac_playing_playlist
+description = List all playlist MAC playing
+core = 7.x
+package = AdTRUE
+dependencies[] = adstrue_mac

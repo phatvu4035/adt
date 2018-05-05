@@ -1,0 +1,96 @@
+<?php 
+/*
+* Implement hook_menu()
+*/
+include_once(drupal_get_path('module', 'playlist_management') . '/inc/playlist_management.inc');
+
+
+function playlist_management_permission() {
+    $permissions['adtrue playlist'] = array(
+        'title' => t('Quyền quản lý Playlist'),
+        'description' => t('Quyền quản lý Playlist'),
+    );
+
+    return $permissions;
+}
+
+function playlist_management_menu() {
+	$items['manage_playlist/create'] = array(
+		'title' => 'Tạo Playlist',
+        'page callback' => 'drupal_get_form',
+		'page arguments' => array('adtrue_playlist_create_form'),
+		'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+	);
+    $items['manage_playlist/list'] = array(
+        'title' => 'Danh sách Playlist',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('list_playlist_form'),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['manage_playlist/view/%'] = array(
+        'title' => 'Chi tiết Playlist',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('view_playlist_form',2),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['manage_playlist/update/%'] = array(
+        'title' => 'Cập nhật nội dung Playlist',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('update_playlist_form',2),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['manage_playlist/delete/slide/%/%'] = array(
+        'title' => 'Xóa nội dung khỏi Playlist',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('delete_slide_playlist_form',3,4),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['manage_playlist/edit/%'] = array(
+        'title' => 'Sửa Playlist',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('edit_playlist_form',2),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['manage_playlist/delete/playlist/%'] = array(
+        'title' => 'Sửa Playlist',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('delete_playlist_form',3),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['manage_playlist/default/list'] = array(
+        'title' => 'Danh sách Playlist Default',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('list_playlist_default_form'),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['manage_playlist/connect/list'] = array(
+        'title' => 'Danh sách Playlist Kiểm tra kết nối',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('list_playlist_check_internet_form'),
+        'access arguments' => array('adtrue playlist'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+
+	return $items;
+}
+
+
+

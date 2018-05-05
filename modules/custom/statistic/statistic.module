@@ -1,0 +1,82 @@
+<?php
+include_once(drupal_get_path('module', 'statistic') . '/inc/statistic.inc');
+include_once(drupal_get_path('module', 'statistic') . '/inc/fail_statistic.inc');
+
+function statistic_permission()
+{
+    $permissions['adtrue statistic'] = array(
+        'title' => t('Phân quyền thống kê hệ thống AdTRUE'),
+        'description' => t('Phân quyền thống kê hệ thống AdTRUE'),
+    );
+    return $permissions;
+}
+
+function statistic_menu(){
+    $items = array();
+    $items['statistic/device/version/list'] = array(
+        'title' => t('Thống kê phiên bản Thiết bị'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('statistic_device_version_list_form'),
+        'access arguments' => array('adtrue statistic'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['statistic/device/monitoring/list'] = array(
+        'title' => t('Thống kê tải file & chơi nôi dung của Thiết bị'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('statistic_device_monitoring_list_form'),
+        'access arguments' => array('adtrue statistic'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['statistic/device/monitoring/view/%'] = array(
+        'title' => t('Thống kê tải file & chơi nôi dung của Thiết bị'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('statistic_device_monitoring_view_form',4),
+        'access arguments' => array('adtrue statistic'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['statistic/app/version/list'] = array(
+        'title' => t('Thống kê phiên bản Ứng dụng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('statistic_app_version_list_form'),
+        'access arguments' => array('adtrue statistic'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['statistic/device/fail/list'] = array(
+        'title' => t('Thống kê các thiết bị không tải được file'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('statistic_device_fail_list_form'),
+        'access arguments' => array('adtrue statistic'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['statistic/device/update/downloaded'] = array(
+        'title' => t('Cập nhật tình trạng tải file'),
+        'page callback' => 'check_status_logging_download',
+        'access arguments' => array(TRUE),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['statistic/cron/cleanup'] = array(
+        'title' => t('Cập nhật cron'),
+        'page callback' => 'statistic_cron_cleanup',
+        'access arguments' => array(TRUE),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    return $items;
+}
+
+
+/*
+* Implementing hook_cron()
+*/
+function statistic_cron() {
+    watchdog('statistic','Running update Logging Broadcast Playlist');
+    check_status_logging_download();
+}
+
+?>

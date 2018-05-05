@@ -1,0 +1,42 @@
+<?php
+include_once drupal_get_path('module','adtrue_file_config').'/adtrue_file_config.inc';
+/*
+* Implementing hook_permission()
+*/
+function adtrue_file_config_permission() {
+	$permissions['adtrue manage file transfer config'] = array(
+        'title' => t('Quyền cấu hình server upload file'),
+        'description' => t('Quyền quản lí server'),
+    );
+
+    return $permissions;
+}
+
+/*
+* Implementing hook_menu()
+*/
+function adtrue_file_config_menu() {
+	$items = array();
+	$items['transfer_file/config/setting'] = array(
+		'title' => 'Cấu hình SFTP tải file lên server',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('file_transfer_config_server'),
+		'access arguments' => array('adtrue manage file transfer config'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['transfer_file/config/statistic'] = array(
+		'title' => 'SFTP cấu hình Server',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('file_transfer_config_show'),
+		'access arguments' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['transfer_file/config/delete'] = array(
+		'title' => 'Xóa cấu hình SFTP',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('file_transfer_config_delete'),
+		'access arguments' => array('access content'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	return $items;
+}

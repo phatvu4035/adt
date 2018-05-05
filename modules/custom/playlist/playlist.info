@@ -1,0 +1,6 @@
+name = AdTRUE Service
+description = Services for the Playlist content type.
+package = AdTRUE
+dependencies[] = services
+files[] = playlist.inc
+core = 7.x

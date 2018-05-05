@@ -1,0 +1,136 @@
+<?php
+include_once(drupal_get_path('module', 'adtrue') . '/inc/adtrue.inc');
+function adtrue_permission() {
+
+    $permissions['adtrue admin'] = array(
+        'title' => t('Quyền quản lý cho Người quản trị hệ thống'),
+        'description' => t('Quyền quản lý cho Người quản trị hệ thống'),
+    );
+    $permissions['adtrue broadcast'] = array(
+        'title' => t('Quyền quản lý Lịch phát sóng'),
+        'description' => t('Quyền quản lý Lịch phát sóng'),
+    );
+    $permissions['adtrue broadcast review'] = array(
+        'title' => t('Phân Quyền phê duyệt Lịch phát sóng'),
+        'description' => t('Phân Quyền phê duyệt Lịch phát sóng'),
+    );
+    $permissions['adtrue device'] = array(
+        'title' => t('Quyền quản lý Thiết bị'),
+        'description' => t('Quyền quản lý Thiết bị'),
+    );
+
+    return $permissions;
+}
+
+function adtrue_menu()
+{
+    $items = array();
+    $items['broadcast/list'] = array(
+        'title' => t('Lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_list_form'),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/create'] = array(
+        'title' => t('Tạo lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_create_form'),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/add/playlist/%'] = array(
+        'title' => t('Thêm playlist vào lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_add_playlist_form',3),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/set_time/playlist/%'] = array(
+        'title' => t('Thiết lập thời gian phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_set_time_playlist_form',3),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/view/playlist/%'] = array(
+        'title' => t('Chi tiết Lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_view_playlist_form',3),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/delete/playlist/%'] = array(
+        'title' => t('Xóa playlist khỏi lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_delete_playlist_form',3),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['broadcast/edit/%'] = array(
+        'title' => t('Chi tiết Lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_edit_playlist_form',2),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/delete'] = array(
+        'title' => t('Xóa Lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_delete_form'),
+        'access arguments' => array('adtrue broadcast'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/review/list'] = array(
+        'title' => t('Duyệt lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_review_form'),
+        'access arguments' => array('adtrue broadcast review'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/publish/%'] = array(
+        'title' => t('Phê duyệt lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_review_detail_form',2),
+        'access arguments' => array('adtrue broadcast review'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['broadcast/view/history/%'] = array(
+        'title' => t('Lịch sử phê duyệt lịch phát sóng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('broadcast_review_history_form',3),
+        'access arguments' => array('adtrue broadcast review'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+
+    $items['broadcast/add/playlist/ajax'] = array(
+        'title' => t('Thêm playlist vào lịch phát sóng'),
+        'page callback' => 'broadcast_add_playlist_ajax',
+        'access arguments' => array('access content'),
+        'weight' => 1,
+        'type' => MENU_CALLBACK,
+    );
+    $items['broadcast/remove/playlist/ajax'] = array(
+        'title' => t('Xóa playlist vào lịch phát sóng'),
+        'page callback' => 'broadcast_remove_playlist_ajax',
+        'access arguments' => array('access content'),
+        'weight' => 1,
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+
+}

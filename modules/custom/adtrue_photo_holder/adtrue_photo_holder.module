@@ -1,0 +1,49 @@
+<?php
+include_once drupal_get_path('module','adtrue_photo_holder').'/adtrue_photo_holder.inc';
+
+function adtrue_photo_holder_permission() {
+	$permissions['manage photo holder public'] = array(
+        'title' => t('Quyền QUẢN LÍ PHOTO HOLDER đã tải lên trên hệ thống CMSKT'),
+        'description' => t('Phân quyền hệ thống CMSKT'),
+    );
+}
+
+function adtrue_photo_holder_menu() {
+	$items = array();
+	$items['photo_holder/list'] = array(
+		'title' => 'List photo holder',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('danhsach_photo_holder'),
+		'access arguments' => array('manage photo holder public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM
+	);
+
+	$items['photo_holder/add'] = array(
+		'title' => 'Tạo một photo holder',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('photo_holder_add'),
+		'access arguments' => array('manage photo holder public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	$items['photo_holder/delete/%'] = array(
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('delete_photo_holder',2),
+		'access arguments' => array('manage photo holder public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	$items['photo_holder/edit/%'] = array(
+		'title' => 'Cập nhật ảnh chuyển đổi',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('edit_photo_holder',2),
+		'access arguments' => array('manage photo holder public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	return $items;
+}

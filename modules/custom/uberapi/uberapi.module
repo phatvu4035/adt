@@ -1,0 +1,247 @@
+<?php
+
+/** Gets a note object by id.
+ *
+ * @param int $id
+ * @return object
+
+function playlist_get_playlist($id) {
+    return db_query("SELECT * FROM {note} WHERE id='".$id."'")->fetchAll();
+}
+
+/** Writes a note to the database
+ *
+ * @param object $note
+ * @return void
+
+function note_service_write_note($note) {
+    $primary_key = !empty($note->id) ? array('id') : NULL;
+    drupal_write_record('note', $note, $primary_key);
+}
+
+/**
+ * Deletes a note from the database.
+ *
+ * @param int $id
+ * @return void
+
+function note_service_delete_note($id) {
+    db_query("DELETE FROM {note} WHERE id='".$id."'");
+}
+
+/**
+ * Implementation of hook_services_services().
+ */
+function uberapi_services_resources() {
+    $api = array(
+        'smartads' => array(
+            'operations' => array(
+                'retrieve' => array(
+                    'help' => 'Retrieves a playlist for each device',
+                    'callback' => '_get_playlist_retrieve',
+                    'access callback' => 'user_access',
+                    'access arguments' => array('access content'),
+                    'access arguments append' => FALSE,
+                    'args' => array(
+                        array(
+                            'name' => 'mac',
+                            'type' => 'string',
+                            'description' => 'MAC of device',
+                            'source' => array('path' => '0'),
+                            'optional' => FALSE,
+                        ),
+                    ),
+                ),
+                'index' => array(
+                    'help' => 'Retrieves a listing of slides',
+                    'file' => array('file' => 'inc', 'module' => 'uberapi'),
+                    'callback' => '_uberapi_index',
+                    'access callback' => 'user_access',
+                    'access arguments' => array('access content'),
+                    'access arguments append' => FALSE,
+                    'args' => array(
+                        array(
+                            'name' => 'mac',
+                            'type' => 'string',
+                            'source' => array('param' => 'mac'),
+                            'optional' => TRUE,
+                        ),
+                    ),
+                ),
+            )
+        ),
+        'tracking' => array(
+            'operations' => array(
+                'create' => array(
+                    'help' => 'Creates a tracking',
+                    'callback' => '_tracking_service_create',
+                    'access arguments' => array('views'),
+                    'access callback' => '_tracking_access',
+                    'access arguments append' => TRUE,
+                    'args' => array(
+                        array(
+                            'name' => 'mac',
+                            'type' => 'string',
+                            'description' => 'Địa chỉ mac của thiết bị',
+                            'source' => array('data'=>'mac'),
+                            'optional' => FALSE,
+                        ),
+                        array(
+                            'name' => 'lat',
+                            'type' => 'string',
+                            'description' => 'Kinh độ của thiết bị',
+                            'source' => array('data'=>'lat'),
+                            'optional' => FALSE,
+                        ),
+                        array(
+                            'name' => 'long',
+                            'type' => 'string',
+                            'description' => 'Vĩ độ của thiết bị',
+                            'source' => array('data'=>'long'),
+                            'optional' => FALSE,
+                        ),
+                        array(
+                            'name' => 'playlist_id',
+                            'type' => 'string',
+                            'description' => 'Playlist ID thiết bị chơi',
+                            'source' => array('data'=>'playlist_id'),
+                            'optional' => FALSE,
+                        ),
+                        array(
+                            'name' => 'slide_id',
+                            'type' => 'string',
+                            'description' => 'Nội dung thiết bị chơi',
+                            'source' => array('data'=>'slide_id'),
+                            'optional' => FALSE,
+                        )
+                    ),
+                ),
+                'index' => array(
+                    'help' => 'Retrieves a listing of slides',
+                    'file' => array('file' => 'inc', 'module' => 'uberapi'),
+                    'callback' => '_uberapi_index',
+                    'access callback' => 'user_access',
+                    'access arguments' => array('access content'),
+                    'access arguments append' => FALSE,
+                    'args' => array(
+                        array(
+                            'name' => 'mac',
+                            'type' => 'string',
+                            'source' => array('param' => 'mac'),
+                            'optional' => TRUE,
+                        ),
+                    ),
+                ),
+            )
+        )
+    );
+    return $api;
+    /*
+    return array(
+        'smartads' => array(
+            'get_playlist' => array(
+                'help' => 'Retrieves a playlist for each device',
+                'file' => array('file' => 'inc', 'module' => 'uberapi'),
+                'callback' => '_uberplaylist_retrieve',
+                'access callback' => 'user_access',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'description' => 'MAC of device',
+                        'source' => array('path' => '0'),
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+            /*
+            'create' => array(
+                'help' => 'Creates a note',
+                'file' => array('file' => 'inc', 'module' => 'note_service'),
+                'callback' => '_note_service_create',
+                'access arguments' => array('note service create'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'data',
+                        'type' => 'struct',
+                        'description' => 'The note object',
+                        'source' => 'data',
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+            'update' => array(
+                'help' => 'Updates a note',
+                'file' => array('file' => 'inc', 'module' => 'note_service'),
+                'callback' => '_note_service_update',
+                'access callback' => '_note_service_access',
+                'access arguments' => array('update'),
+                'access arguments append' => TRUE,
+                'args' => array(
+                    array(
+                        'name' => 'id',
+                        'type' => 'int',
+                        'description' => 'The id of the node to update',
+                        'source' => array('path' => '0'),
+                        'optional' => FALSE,
+                    ),
+                    array(
+                        'name' => 'data',
+                        'type' => 'struct',
+                        'description' => 'The note data object',
+                        'source' => 'data',
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+            'delete' => array(
+                'help' => 'Deletes a note',
+                'file' => array('file' => 'inc', 'module' => 'note_service'),
+                'callback' => '_note_service_delete',
+                'access callback' => '_note_service_access',
+                'access arguments' => array('delete'),
+                'access arguments append' => TRUE,
+                'args' => array(
+                    array(
+                        'name' => 'nid',
+                        'type' => 'int',
+                        'description' => 'The id of the note to delete',
+                        'source' => array('path' => '0'),
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+
+            'index' => array(
+                'help' => 'Retrieves a listing of slides',
+                'file' => array('file' => 'inc', 'module' => 'uberapi'),
+                'callback' => '_uberapi_index',
+                'access callback' => 'user_access',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                ),
+            ),
+        ),
+    );
+    */
+}
+function _tracking_access() {
+    return TRUE;
+}
+function _get_playlist_retrieve($mac){
+    return $data['mac'] = $mac;
+}
+function _tracking_service_create($mac,$lat,$long,$playlist_id,$slide_id){
+    return $data['mac'] = $mac.'='.$lat.'='.$long.'='.$playlist_id.'='.$slide_id;
+}
+?>

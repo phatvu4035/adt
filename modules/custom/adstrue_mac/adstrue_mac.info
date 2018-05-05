@@ -1,0 +1,4 @@
+name = Adstrue Mac
+description = Adstrue Mac manage
+core = 7.x
+package = AdTRUE

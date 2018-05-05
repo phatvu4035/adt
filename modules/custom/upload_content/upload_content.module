@@ -1,0 +1,79 @@
+<?php
+include_once drupal_get_path('module','upload_content').'/inc/config.inc';
+include_once drupal_get_path('module','upload_content').'/inc/upload_content.inc';
+/*
+* Implememt hook_menu()
+*/
+function upload_content_menu() {
+	$items = array();
+	$items['noidung/edit/%'] = array(
+		'title' => 'Cập nhật nội dung',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('upload_content_media_server',2),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['noidung/delete/%'] = array(
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('delete_content_media_server',2),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['noidung/add'] = array(
+		'title' => 'Tải nội dung',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('add_content_media_server'),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['noidung/list'] = array(
+		'title' => 'Danh sách nội dung',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('danhsach_noidung_video'),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['noidung/view/%'] = array(
+		'title' => 'Chi tiết nội dung',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('detail_noidung_video',2),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'noidung.inc'
+	);
+	$items['noidung/danhmuc/edit/%'] = array(
+		'title' => 'Cập nhật danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('danhmuc_noidung_edit',4),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'danhmuc.inc'
+	);
+	$items['noidung/danhmuc/add'] = array(
+		'title' => 'Tạo danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('danhmuc_noidung_add'),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'danhmuc.inc'
+	);
+	$items['noidung/danhmuc/delete/%'] = array(
+		'title' => 'Xóa danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('danhmuc_noidung_delete',4),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'danhmuc.inc'
+	);
+
+	return $items;
+}
+

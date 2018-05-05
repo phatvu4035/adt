@@ -1,0 +1,21 @@
+name = File Transfer Wrapper
+description = Custom module to transfer files to remote file server.
+core = 7.x
+configure = admin/config/file_transfer_connections
+
+dependencies[] = composer_manager
+dependencies[] = encrypt
+
+; Information added by Drupal.org packaging script on 2017-11-01
+version = "7.x-1.1"
+core = "7.x"
+project = "file_transfer_wrapper"
+datestamp = "1509516792"
+
+
+; Information added by Drupal.org packaging script on 2017-11-18
+version = "7.x-1.8"
+core = "7.x"
+project = "file_transfer_wrapper"
+datestamp = "1511015894"
+

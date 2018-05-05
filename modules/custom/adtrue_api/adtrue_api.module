@@ -1,0 +1,34 @@
+<?php
+function adtrue_api_form_alter($from,&$form_state,$form_id){
+
+    if($form_id=='user_register_form'){
+        if(arg(0)=='api'){
+            $values = $form_state['values'];
+            $token = md5($values['mac'].$values['device_id']);
+            $new_user = array(
+                'name' => $values['mac'],
+                'mail' => $values['mac'].'@adtrue.vn',
+                'pass' => $token,
+                'status' => 1,
+                'field_device_mac' => array(LANGUAGE_NONE => array(array('value' => $values['mac']))),
+                'field_device_token' => array(LANGUAGE_NONE => array(array('value' => $token))),
+                'access' => REQUEST_TIME,
+                'roles' => array(),
+            );
+
+            $user = user_save(null,$new_user);
+            $return = array();
+            if($user->uid){
+                $return['token'] = $token;
+            }
+            echo drupal_json_encode($return);
+            drupal_exit();
+        }
+    }
+    
+}
+
+
+
+
+?>

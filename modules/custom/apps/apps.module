@@ -1,0 +1,107 @@
+<?php
+
+
+/**
+ * Implementation of hook_services_services().
+ */
+function apps_services_resources() {
+    return array(
+        'apps' => array(
+            /*
+            'retrieve' => array(
+                'help' => 'Retrieves the playlist by date',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_playlist_retrieve',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'date',
+                        'type' => 'string',
+                        'description' => 'L?y danh s�ch playlist 3 ng�y theo th?i gian g?i y�u c?u l�n',
+                        'source' => array('path' => '0'),
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+
+            'create' => array(
+                'help' => 'Creates a note',
+                'file' => array('file' => 'inc', 'module' => 'note_service'),
+                'callback' => '_note_service_create',
+                'access arguments' => array('note service create'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'data',
+                        'type' => 'struct',
+                        'description' => 'The note object',
+                        'source' => 'data',
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+            'update' => array(
+                'help' => 'Updates a note',
+                'file' => array('file' => 'inc', 'module' => 'note_service'),
+                'callback' => '_note_service_update',
+                'access callback' => '_note_service_access',
+                'access arguments' => array('update'),
+                'access arguments append' => TRUE,
+                'args' => array(
+                    array(
+                        'name' => 'id',
+                        'type' => 'int',
+                        'description' => 'The id of the node to update',
+                        'source' => array('path' => '0'),
+                        'optional' => FALSE,
+                    ),
+                    array(
+                        'name' => 'data',
+                        'type' => 'struct',
+                        'description' => 'The note data object',
+                        'source' => 'data',
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+            'delete' => array(
+                'help' => 'Deletes a note',
+                'file' => array('file' => 'inc', 'module' => 'note_service'),
+                'callback' => '_note_service_delete',
+                'access callback' => '_note_service_access',
+                'access arguments' => array('delete'),
+                'access arguments append' => TRUE,
+                'args' => array(
+                    array(
+                        'name' => 'nid',
+                        'type' => 'int',
+                        'description' => 'The id of the note to delete',
+                        'source' => array('path' => '0'),
+                        'optional' => FALSE,
+                    ),
+                ),
+            ),
+            */
+            'index' => array(
+                'help' => 'Retrieves a listing of apps',
+                'file' => array('file' => 'inc', 'module' => 'apps'),
+                'callback' => '_apps_index',
+                'access callback' => 'user_access',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(),
+            ),
+            'update_launcher' => array(
+                'help' => 'Check update launcher',
+                'file' => array('file' => 'inc', 'module' => 'apps'),
+                'callback' => '_get_update_launcher',
+                'access callback' => 'user_access',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(),
+            ),
+        ),
+    );
+}
+?>

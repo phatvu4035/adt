@@ -1,0 +1,52 @@
+<?php
+include drupal_get_path('module','adstrue_podcast').'/inc/adstrue_podcast.inc';
+include drupal_get_path('module','adstrue_podcast').'/inc/playlist_broadcast.inc';
+/*
+* hook_menu()
+*/
+function adstrue_podcast_menu() {
+	$items = array();
+	$items['podcast/list'] = array(
+		'title' => t(' Danh sách lịch phát sóng'),
+		'page callback' => 'drupal_get_form',
+	    'page arguments' => array('list_podcast_manage_all'),
+		'access arguments' => array(0),
+		'access callback' => TRUE,
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	$items['podcast/add'] = array(
+		'title' => 'Quản lí lịch phát sóng',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('control_podcast_form'),
+		'access arguments' => array(0),
+		'access callback' => TRUE,
+		'type' => MENU_NORMAL_ITEM
+	);
+	$items['playlist/search_job'] = array(
+	    'title' => 'Searching Playlist',
+	    'page callback' => 'load_playlist_suggestion_job',
+	    'access arguments' =>array(0),
+	    'access callback' => TRUE,
+	    'type' => MENU_NORMAL_ITEM
+	);
+  $items['podcast/%/delete'] = array(
+      'title' => 'Xóa lịch phát sóng',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('delete_broadcast_by_term',1),
+      'access arguments' =>array(0),
+      'access callback' => TRUE,
+      'type' => MENU_NORMAL_ITEM
+  );
+  $items['podcast/edit'] = array(
+      'title' => 'Cập nhật lịch phát sóng',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('edit_broadcast_by_term'),
+      'access arguments' =>array(0),
+      'access callback' => TRUE,
+      'type' => MENU_NORMAL_ITEM
+  );
+	return $items;
+}
+
+

@@ -1,0 +1,5 @@
+name = AdTRUE Functions
+description = The functions of AdTRUE.
+package = AdTRUE
+files[] = inc/adtrue.inc
+core = 7.x

@@ -1,0 +1,5 @@
+name = AdTRUE User Management
+description = The user management of AdTRUE.
+package = AdTRUE
+files[] = inc/adtrue_user.inc
+core = 7.x

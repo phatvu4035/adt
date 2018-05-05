@@ -1,0 +1,20 @@
+<?php
+include_once drupal_get_path('module','upload_noidung').'/inc/config.php';
+include_once drupal_get_path('module','upload_noidung').'/inc/upload_noidung.inc';
+/*
+* Implememt hook_menu()
+*/
+function upload_noidung_menu() {
+	$items = array();
+	$items['tainoidung/create'] = array(
+		'title' => 'Tải nội dung',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('add_noidung_media_server'),
+		'access arguments' => array('access content'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	return $items;
+}
+

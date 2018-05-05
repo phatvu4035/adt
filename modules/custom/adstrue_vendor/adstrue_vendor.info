@@ -1,0 +1,5 @@
+name = Adstrue vendor
+description = Adstrue manage company, region, province
+core = 7.x
+package = AdTRUE
+dependencies[] = adstrue_mac

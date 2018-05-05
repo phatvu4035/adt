@@ -1,0 +1,28 @@
+<?php 
+
+/*
+* hook_menu()
+*
+*/
+function adstrue_slide_menu() {
+	$items = array();
+	// Add node to slide content type
+	$items['slide/add'] = array(
+		'title' => t('Thêm nội dung slides'),
+		'page callback' => 'adstrue_slide_add_node',
+		'access arguments' => TRUE,
+		'type' => MENU_NORMAL_ITEM,
+	);
+	return $items;
+}
+
+function adstrue_slide_add_node() {
+	module_load_include('inc', 'node', 'node.pages');
+	$node_form = new stdClass;
+	$node_form->type = 'slides';
+	$node_form->language = LANGUAGE_NONE;
+	$form = drupal_get_form('slides_node_form', $node_form);
+	unset($form['comment_settings']);
+	unset($form['menu']);
+	return $form;
+}

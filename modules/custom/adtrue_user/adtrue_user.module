@@ -1,0 +1,41 @@
+<?php
+include_once(drupal_get_path('module', 'adtrue_user') . '/inc/adtrue_user.inc');
+include_once(drupal_get_path('module', 'adtrue') . '/inc/adtrue.inc');
+function adtrue_user_permission()
+{
+    $permissions['adtrue user'] = array(
+        'title' => t('Phân quyền quản lý User AdTRUE'),
+        'description' => t('Phân quyền quản lý User AdTRUE'),
+    );
+    return $permissions;
+}
+
+function adtrue_user_menu(){
+    $items = array();
+    $items['manage/user/list'] = array(
+        'title' => t('Danh sách người dùng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('manage_user_list_form'),
+        'access arguments' => array('adtrue user'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['manage/user/edit/%'] = array(
+        'title' => t('Phân quyền quản lý nội dung cho người dùng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('manage_user_edit_form',3),
+        'access arguments' => array('adtrue user'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['manage/user/reset/%'] = array(
+        'title' => t('Reset quyền quản lý nội dung cho người dùng'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('manage_user_reset_form',3),
+        'access arguments' => array('adtrue user'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+?>

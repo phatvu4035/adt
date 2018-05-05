@@ -1,0 +1,107 @@
+<?php
+/*
+* Implement hook_form_alter
+*/
+
+function adtrue_alter_menu_form_alter(&$form, &$form_state, $form_id) {
+	if($form_id == 'menu_edit_item') {
+		$mlid = $form['mlid']['#value'];
+		$query  = db_select('menu_icon','micon');
+		$query->condition('menu_item_id',$mlid);
+		$query->fields('micon',array('icon_value'));
+		$result = $query->execute();
+		$icon_value = '';
+		if(count($result)) {
+			foreach ($result as $row) {
+				$icon_value = $row->icon_value;
+			}
+		}
+		$form['icon_menu'] = array(
+			'#title' => 'Icon',
+		    '#type' => 'text_format',
+		    '#format' => 'full_html',
+		    '#description' => "Add icon to menu",
+		    '#default_value' => $icon_value
+		);
+		$form['#submit'][] = 'adtrue_alter_menu_item_submit';
+		$form['#validate'][] = 'adtrue_alter_menu_item_validate';
+	}
+
+	if($form_id == 'menu_item_delete_form') {
+		$form['#submit'][] = 'adtrue_alter_menu_delete_item_submit';
+	}
+}
+// validate
+function adtrue_alter_menu_item_validate($form, &$form_state) {
+	if(strlen($form_state['values']['icon_menu']['value']) > 100) {
+		form_set_error('icon_menu','Độ dài text quá lớn');
+	} 
+}
+function adtrue_alter_menu_item_submit($form, &$form_state) {
+	$value_icon = $form_state['values']['icon_menu']['value'];
+	if($value_icon == '' || $form_state['values']['menu_name'] !== 'menu-adtrue-mainmenu') {
+		return;
+	}
+	$mlid = $form_state['values']['mlid'];
+	$query  = db_select('menu_icon','micon');
+	$query->condition('menu_item_id',$mlid);
+	$query->fields('micon',array('icon_value'));
+	$result = $query->execute();
+	if($result->rowCount()) {
+		$query_update  = db_update('menu_icon')
+						 ->fields(array(
+						    'icon_value' => $value_icon,
+						  ))
+						 ->condition('menu_item_id',$mlid)
+						 ->execute();
+	} else {
+		$query_insert = db_insert('menu_icon')
+						 ->fields(array(
+						    'icon_value' => $value_icon,
+						    'menu_item_id' => $mlid,
+						  ))
+						 ->execute();
+	}
+}
+
+function get_menu_adtrue_icon() {
+    return db_select('menu_icon','micon')
+			 ->fields('micon') 
+		     ->execute()
+		     ->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function adtrue_alter_menu_delete_item_submit($form, &$form_state) {
+	if($form_state['build_info']['args'][0]['menu_name'] == 'menu-adtrue-mainmenu') {
+		$mlid = $form_state['build_info']['args'][0]['mlid'];
+		$num_deleted = db_delete('menu_icon')
+						->condition('menu_item_id', $mlid)
+				  		->execute();
+	}
+}
+
+// Custom l() function
+function adtrue_custom_l($text, $path, array $options = array(),$icon_value = '') {
+      global $level;
+      // Merge in defaults.
+      $options += array(
+        'attributes' => array(
+          
+        ),
+        'html' => FALSE,
+      );
+
+      $icon = '';
+      // Add arrow
+      if($level == 1 && $path == '<front>') {
+        $icon = '<i class="fa fa-angle-left pull-right"></i>';
+      }
+
+      return '<a href="'.check_plain(url($path, $options)).'">
+            '.$icon_value.'
+            <span>'.($options['html'] ? $text : check_plain($text)).'</span>
+            <span class="pull-right-container">
+              '.$icon.'
+            </span>
+          </a>';
+}

@@ -1,0 +1,359 @@
+html, body  {
+	height: 100%;
+}
+
+#delete-content-media-server, #delete-broadcast-by-term, #adstrue-mac-delete {
+	background-color: #fff;
+	padding: 5px 15px 20px 15px;
+	border-radius: 4px;
+}
+
+#delete-content-media-server  #edit-actions, #delete-broadcast-by-term #edit-actions, #adstrue-mac-delete #edit-actions {
+	display: flex;
+	margin-top: 20px !important;
+}
+#delete-content-media-server #edit-actions #edit-submit, #delete-broadcast-by-term #edit-actions #edit-submit, #adstrue-mac-delete #edit-actions #edit-submit {
+    max-width: 35%;
+    line-height: 20px;
+    background-color: #0a6700;
+    font-size: 16px;
+}
+
+#delete-content-media-server #edit-actions a , #delete-broadcast-by-term #edit-actions a , #adstrue-mac-delete #edit-actions a {
+    margin-left: 15px;
+    line-height: 25px;
+    padding: 6px 12px;
+    display: block;
+    width: 35%;
+    background-color: #f69231;
+    color: #fff;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 16px;
+}
+#edit-upload-info {
+	overflow: hidden;
+}
+.tools i {
+    margin-right: 4px;
+}
+/* 08/11 mac */
+#edit-create-mac a {
+	margin-top: 25px;
+}
+#edit-export-excel {
+	margin-top: 25px;
+	color: #fff;
+    background-color: #f0ad4e;
+    border-color: #f0ad4e;
+}
+
+/* Adtrue vendor */
+#delete-adstrue-vendor-company,#delete-adstrue-vendor-region,#delete-adstrue-vendor-province,#delete-adstrue-vendor-store {
+	background-color: #fff;
+	padding: 5px 15px 20px 15px;
+	border-radius: 4px;
+}
+
+#delete-adstrue-vendor-company  #edit-actions, #delete-adstrue-vendor-region #edit-actions, #delete-adstrue-vendor-province #edit-actions,#delete-adstrue-vendor-store  #edit-actions {
+	display: flex;
+	margin-top: 20px !important;
+}
+#delete-adstrue-vendor-company  #edit-actions #edit-submit, #delete-adstrue-vendor-region #edit-actions #edit-submit, #delete-adstrue-vendor-province #edit-actions #edit-submit,#delete-adstrue-vendor-store  #edit-actions #edit-submit {
+    max-width: 35%;
+    line-height: 20px;
+    background-color: #0a6700;
+    font-size: 16px;
+}
+
+#delete-adstrue-vendor-company  #edit-actions a, #delete-adstrue-vendor-region #edit-actions a, #delete-adstrue-vendor-province #edit-actions a,#delete-adstrue-vendor-store  #edit-actions a {
+	margin-left: 15px;
+    line-height: 25px;
+    padding: 6px 12px;
+    display: block;
+    width: 35%;
+    background-color: #f69231;
+    color: #fff;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 16px;
+}
+.box-search-item #edit-create-province a, .box-search-item #edit-create-store a {
+	margin-top: 25px;
+}
+
+
+.content-wrapper {
+	min-height: 620px;
+}
+.main-footer {
+	background-color: #ecf0f5;
+	border-top: none;
+}
+.wrapper-form {
+	padding-bottom: 15px;
+}
+.page-store .form-item-company-id,.page-store .form-item-region-id,.page-store .form-item-province-id, .page-province .form-item-company-id {
+	margin-bottom: 15px !important;
+}
+#adstrue-vendor-add-company input {
+	border-radius: 4px;
+}
+.page_update_mac {
+	background-color: #fff;
+	padding: 15px 30px;
+}
+#edit-create-upload .btn {
+	margin-top: 25px;
+}
+/* */
+.form-wrapper .tools {
+	overflow: hidden;
+}
+.form-wrapper table thead th:last-child {
+
+}
+#edit-danhsach-mac table thead th:last-child {
+	text-align: left;
+	padding-right: 0;
+}
+#control-podcast-form #edit-mac-name {
+	margin-bottom: 20px;
+}
+
+#adstrue-vendor-add-region #edit-submit,#adstrue-vendor-add-company #edit-submit,#adstrue-mac-update-property #edit-submit,#adstrue-vendor-add-store  #edit-submit ,
+#adstrue-vendor-add-provice #edit-submit {
+  max-width: 75px;
+  float: right;
+  margin-top: 20px;
+}
+#edit-header-filter #edit-submit-search {
+	margin-top: 25px;
+}
+
+#edit-push-myfile-upload {
+	display: flex;
+}
+#edit-push-myfile-upload #edit-push-myfile-remove-button, #edit-push-myfile-upload-button{
+	max-width: 73px;
+    display: inline-block;
+    margin-left: 6px;
+}
+
+#edit-push-myfile-upload--2 {
+	margin-right: 0;
+	display: inline-block;
+}
+
+#edit-podcast-grid-playlist {
+	margin-top: 35px;
+}
+#edit-podcast-grid-playlist .box-header.with-border {
+	color: white;
+    background: #00a65a;
+    padding-bottom: 5px;
+    padding-top: 6px;
+}
+.stt, .playlist,.ngaybatdau , .ngaykethuc , .chonplaylist, .chonmacdinh {
+	font-weight: bold;
+	padding-top: 10px;
+}
+.playlist_rec {
+	padding: 10px;
+}
+.playlist_rec:nth-child(even) {
+	background-color: #f9f9f9;
+
+}
+.playlist_rec .form-type-date-popup .form-item {
+ 	width: 60% !important;
+ 	float:left;
+ 	padding-right: 15px !important;
+ }
+.playlist_rec .form-type-date-popup .form-item {
+ 	width: 40% !important;
+ 	float:left;
+ }
+.playlist_rec .form-type-date-popup .form-item input,.playlist_rec .form-type-date-popup .form-item input {
+  	width: 100% !important;
+}
+.container-inline-date .description {
+	display: none;
+}
+
+.wr .box {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	overflow: hidden;
+	border-radius: 3px;
+}
+.center_small_form {
+	max-width: 350px;
+	margin: 0 auto;
+}
+.box .form-wrapper {
+	border:none;
+	box-shadow: none;
+}
+.select-all{
+	text-align: center;
+}
+
+#edit-search-box .btn{
+	margin-top : 24px;
+}
+
+.ui-timepicker-table td {
+	padding: 0.05em;
+    width: 7.2em;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	background: #e6e6e6 100% 100% repeat-x;
+	width: 100%;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+	background: #fff 100% 100% repeat-x;
+	width: 100%;
+}
+
+/* Noi dung */
+#edit-noidung-danhsach .box-search-item #edit-submit {
+	margin-top: 25px;
+}
+.wrapper_noidung {
+	padding: 20px 15px;
+	overflow: hidden;
+}
+.noidung {
+	background-color: #fff;
+	overflow: hidden;
+	padding: 20px 0;
+	border-top: 3px solid #00a65a;
+}
+.noidung_center {
+	max-width: 350px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+
+
+.property {
+	overflow: hidden;
+}
+#edit-create-broadcast a {
+	margin-top: 25px;
+}
+.wrap_podcast {
+    padding: 0 15px;
+}
+.name_broadcast {
+	margin-top: 20px;
+}
+.box_podcast {
+	padding: 20px 15px;
+	background-color: #fff;
+	border-top: 3px solid #00a65a;
+}
+.header_add_pod {
+	overflow: hidden;
+}
+.playlist_rec {
+	overflow: hidden;
+}
+
+.badge {
+	margin-left: 15px;
+}
+
+/* User style upload content */
+.user_upload {
+	display: flex;
+}
+.user_pic {
+	margin-right: 10px;
+}
+label{
+    display: block;
+}
+.file_duration_hidden {
+	display: none;
+}
+#edit-search-button,#edit-add-button{
+	margin-top: 25px;
+}
+.item-list{
+	padding : 20px;
+}
+
+/* photo holder */
+#edit-upload-info {
+	padding-bottom: 10px;
+}
+#edit-photo-holder-upload {
+	display: flex;
+}
+#edit-photo-holder-upload-button,#edit-photo-holder-remove-button {
+	max-width: 73px;
+	display: inline-block;
+    margin-left: 6px;
+}
+#delete-photo-holder {
+	background-color: #fff;
+    padding: 5px 15px 20px 15px;
+    border-radius: 4px;
+}
+#delete-photo-holder #edit-actions {
+	display: flex;
+    margin-top: 20px !important;
+}
+#delete-photo-holder #edit-submit {
+	max-width: 35%;
+    line-height: 20px;
+    background-color: #0a6700;
+    font-size: 16px;
+}
+#delete-photo-holder #edit-actions a {
+	margin-left: 15px;
+    line-height: 25px;
+    padding: 6px 12px;
+    display: block;
+    width: 35%;
+    background-color: #f69231;
+    color: #fff;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 16px;
+}
+#edit-photo-holder .form-managed-file {
+	display: flex;
+}
+
+/*
+User edit profile
+*/
+
+.user-form-custom .form-group {
+	overflow: hidden;
+}
+.user-form-custom .btn-block {
+	background-color: #dd4b39;
+    border-color: #d73925;
+    color: #fff;
+    border-radius: 3px;
+    width: auto !important;
+    padding: 6px 12px;
+}
+.form-custom-input .form-required {
+	display: none;
+}
+.form-custom-input label {
+	display: none;
+}
+.form-custom-input .password-suggestions.description {
+	display: none !important;
+}
+.form-custom-input .form-type-password-confirm label {
+	display: block;
+	font-weight: normal;
+}

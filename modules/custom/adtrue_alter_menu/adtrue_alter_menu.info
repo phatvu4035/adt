@@ -1,0 +1,5 @@
+name = Alter Adminlte menu
+description = Alter Adminlte menu
+core = 7.x
+
+package = AdTRUE

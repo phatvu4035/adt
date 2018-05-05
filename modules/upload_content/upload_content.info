@@ -1,0 +1,3 @@
+name = Upload content
+description = Manage upload content to serve
+core = 7.x

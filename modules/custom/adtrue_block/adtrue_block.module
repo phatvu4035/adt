@@ -1,0 +1,44 @@
+<?php
+include_once(drupal_get_path('module', 'adtrue_block') . '/inc/adtrue_block.inc');
+include_once(drupal_get_path('module', 'adtrue') . '/inc/adtrue.inc');
+function adtrue_block_block_info() {
+    $blocks = array();
+    $blocks['content_dashboard'] = array(
+        'info' => 'Khối tổng hợp thông tin của Module Nội dung',
+    );
+    $blocks['device_dashboard'] = array(
+        'info' => 'Khối tổng hợp thông tin Thiết bị',
+    );
+    $blocks['broadcast_dashboard'] = array(
+        'info' => 'Khối tổng hợp thông tin Lịch phát sóng',
+    );
+    $blocks['timeline_dashboard'] = array(
+        'info' => 'Khối hiển thị nội dung đang phát trên hệ thống',
+    );
+
+    return $blocks;
+}
+
+function adtrue_block_block_view($delta = '') {
+    $block = array();
+    if ($delta == 'content_dashboard') {
+        $block['subject'] = 'Khối tổng hợp thông tin của Module Nội dung';
+        $block['content'] = content_dashboard();
+    }
+    if($delta == 'device_dashboard'){
+        $block['subject'] = 'Khối tổng hợp thông tin Thiết bị';
+        $block['content'] = device_dashboard();
+    }
+    if($delta == 'broadcast_dashboard'){
+        $block['subject'] = 'Khối tổng hợp thông tin Lịch phát sóng';
+        $block['content'] = broadcast_dashboard();
+    }
+    if($delta == 'timeline_dashboard'){
+        $block['subject'] = 'Khối hiển thị nội dung đang phát trên hệ thống';
+        $block['content'] = timeline_dashboard();
+    }
+
+
+    return $block;
+}
+?>

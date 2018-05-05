@@ -1,0 +1,22 @@
+<?php 
+use phpseclib\Net\SSH2;
+use phpseclib\Net\SFTP;
+/*
+* implement hook_menu()
+*/
+function mymodule_menu() {
+	$items = array();
+	$items['test-connect'] = array(
+		'title' => 'This is mymodule page',
+		'page callback' => 'try_to_connect',
+		'access arguments' => TRUE,
+		'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+function try_to_connect() {
+	 // SFTP
+
+
+}

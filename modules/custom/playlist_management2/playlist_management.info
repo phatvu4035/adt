@@ -1,0 +1,3 @@
+name = Playlist Management
+description = Creating and Delete Content in Playlist
+core = 7.x

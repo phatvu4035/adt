@@ -1,0 +1,6 @@
+name = Uber Api Service
+description = Get list slide for uber api
+package = AdTRUE
+dependencies[] = services
+files[] = uberapi.inc
+core = 7.x

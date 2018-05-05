@@ -1,0 +1,19 @@
+.wrPl {}
+.form-wrapper {
+	border: none !important;
+}
+#control-podcast-form {
+    overflow: hidden;
+    padding: 30px 0;
+}
+.appP {
+	position: absolute;
+	padding-top: 25px;
+}
+.page-broadcast-playlist #block-system-main {
+	overflow: hidden;
+	background-color: #fff;
+}
+.box.box-success {
+	border: none !important;
+}

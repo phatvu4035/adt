@@ -1,0 +1,67 @@
+.logged-in.admin-menu .main-sidebar {
+  padding-top: 55px;
+  z-index: 50;
+}
+
+.logged-in .main-header {
+  position: relative;
+  max-height: 100px;
+  z-index: 500;
+}
+
+.control-sidebar {
+  position: absolute;
+  padding-top: 50px !important;
+  z-index: 60 !important;
+}
+
+.control-sidebar.control-sidebar-open+.control-sidebar-bg,
+.control-sidebar+.control-sidebar-bg {
+  z-index: 50;
+}
+
+.logo-lg img {
+  width: 45px;
+}
+
+.logo-mini img {
+  width: 40px;
+}
+.form-item, .form-actions {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+.tools {
+  margin: 0;
+  padding:0;
+}
+.tools li{
+    list-style: none;
+    float: left;
+    padding-right : 2px;
+    margin-bottom : 5px;
+}
+.sidebar .content  {
+   padding: 0;
+}
+.box-search-item {
+    height: 60px;
+}
+.box-search-item #edit-submit-search {
+  margin-top: 25px;
+}
+#edit-danhsach-store table tr td:nth-child(3) {
+  max-width: 210px;
+}
+
+.box-header.form-wrapper {
+    border: 1px solid #dad8d8 !important;
+    box-shadow: none;
+}
+
+#edit-buttons .col-md-5{
+    padding-left: 0px;
+}
+.page-user-login{
+    background: #d2d6de;
+}

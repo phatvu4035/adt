@@ -1,0 +1,80 @@
+<?php
+/**
+ * Implements hook_menu
+ */
+function x_forms_menu() {
+    $items['referral'] = array(
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('custom_forms_referral_create'),
+      'access arguments' => array(0),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+    );
+    $items['providers/autocomplete/%'] = array(
+    	'page callback' => 'custom_forms_providers_autocomplete',
+    	'page arguments' => array(2),
+    	'access arguments' => array(0),
+      'access callback' => TRUE,
+    	'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+
+/**
+ * Builds the form to create a referral
+ */
+function custom_forms_referral_create() {
+  $reftypes = get_referral_types();
+  $type = get_default_referral_type();
+  $form['referral_type'] = array(
+    '#type' => 'select',
+    '#title' => 'Select a Referral Type',
+    '#options' => $reftypes,
+    '#default_value' => $type,
+    '#ajax' => array(
+      'callback' => 'custom_forms_referral_update',
+      'wrapper' => 'referral_provider',
+      'progress' => array(
+        'message' => '',
+        'type' => 'throbber',
+      ),
+    ),
+  );
+  $form['provider'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Select a Provider',
+    '#description' => 'Please note available providers change based on the referral type.',
+    '#required' => TRUE,
+    '#autocomplete_path' => 'providers/autocomplete/' . $type,
+    '#prefix' => '<div id="referral_provider">',
+    '#suffix' => '</div>',
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Submit',
+  );
+  return $form;
+}
+
+function custom_forms_providers_autocomplete($type, $text){
+  $selected_providers = array();
+  $providers = get_providers_of_type($type);
+  foreach($providers as $nid => $provider){
+    if(strpos(strtoupper($provider->title), strtoupper($text)) !== FALSE)
+      $selected_providers[$provider->title . ' (' . $nid . ')'] = $provider->title;
+  }
+  drupal_json_output($selected_providers);
+}
+
+/**
+ * Changes the referral type on the create referral form
+ */
+function custom_forms_referral_update($form, &$form_state) {
+  unset($form_state['input']['provider'], $form_state['values']['provider']);
+  $type = $form_state['values']['referral_type'];
+  $form['provider']['#autocomplete_path'] = 'providers/autocomplete/' . $type;
+  $commands = array();
+  $commands[] = ajax_command_replace("#referral_provider", drupal_render($form['provider']));
+  return array('#type' => 'ajax', '#commands' => $commands);
+}

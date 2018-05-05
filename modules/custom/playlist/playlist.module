@@ -1,0 +1,326 @@
+<?php
+/**
+ * Implementation of hook_services_services().
+ */
+function playlist_services_resources() {
+    return array(
+        'playlist' => array(
+            /*
+           'create' => array(
+               'help' => 'Creates a note',
+               'file' => array('file' => 'inc', 'module' => 'note_service'),
+               'callback' => '_note_service_create',
+               'access arguments' => array('note service create'),
+               'access arguments append' => FALSE,
+               'args' => array(
+                   array(
+                       'name' => 'data',
+                       'type' => 'struct',
+                       'description' => 'The note object',
+                       'source' => 'data',
+                       'optional' => FALSE,
+                   ),
+               ),
+           ),
+           'update' => array(
+               'help' => 'Updates a note',
+               'file' => array('file' => 'inc', 'module' => 'note_service'),
+               'callback' => '_note_service_update',
+               'access callback' => '_note_service_access',
+               'access arguments' => array('update'),
+               'access arguments append' => TRUE,
+               'args' => array(
+                   array(
+                       'name' => 'id',
+                       'type' => 'int',
+                       'description' => 'The id of the node to update',
+                       'source' => array('path' => '0'),
+                       'optional' => FALSE,
+                   ),
+                   array(
+                       'name' => 'data',
+                       'type' => 'struct',
+                       'description' => 'The note data object',
+                       'source' => 'data',
+                       'optional' => FALSE,
+                   ),
+               ),
+           ),
+           'delete' => array(
+               'help' => 'Deletes a note',
+               'file' => array('file' => 'inc', 'module' => 'note_service'),
+               'callback' => '_note_service_delete',
+               'access callback' => '_note_service_access',
+               'access arguments' => array('delete'),
+               'access arguments append' => TRUE,
+               'args' => array(
+                   array(
+                       'name' => 'nid',
+                       'type' => 'int',
+                       'description' => 'The id of the note to delete',
+                       'source' => array('path' => '0'),
+                       'optional' => FALSE,
+                   ),
+               ),
+           ),
+           */
+            'index' => array(
+                'help' => 'Retrieves a listing of playlist',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_playlist_index',
+                'access callback' => 'user_access',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'mac_eth',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac_eth'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'complete_videos',
+                        'type' => 'string',
+                        'source' => array('param' => 'complete_videos'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'playlist_id',
+                        'type' => 'string',
+                        'source' => array('param' => 'playlist_id'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'broadcast_id',
+                        'type' => 'string',
+                        'source' => array('param' => 'broadcast_id'),
+                        'optional' => TRUE,
+                    ),
+                ),
+            ),
+        ),
+        'launcher' => array(
+            'index' => array(
+                'help' => 'Check latest launcher update',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_get_update_launcher',
+                'access arguments' => array('view'),
+                'access callback' => '_logging_launcher_access',
+                'access arguments append' => TRUE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'mac_eth',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac_eth'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'version_code',
+                        'type' => 'int',
+                        'source' => array('param' => 'version_code'),
+                        'optional' => TRUE,
+                    ),
+                ),
+            ),
+            'create' => array(
+                'help' => 'Creates launcher updating log',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_logging_update_launcher_service_create',
+                'access arguments' => array('create'),
+                'access callback' => '_logging_launcher_access',
+                'access arguments append' => TRUE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'version_code',
+                        'type' => 'string',
+                        'source' => array('param' => 'version_code'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'version_name',
+                        'type' => 'string',
+                        'source' => array('param' => 'version_name'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'update_type',
+                        'type' => 'int',
+                        'source' => array('param' => 'update_type'),
+                        'optional' => TRUE,
+                    ),
+                ),
+            ),
+        ),
+        'playlist_completed' => array(
+            'create' => array(
+                'help' => 'Creates the playlist completed',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_playlist_completed_service_create',
+                'access arguments' => array('create'),
+                'access callback' => '_playlist_completed_access',
+                'access arguments append' => TRUE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'playlist_id',
+                        'type' => 'int',
+                        'source' => array('param' => 'playlist_id'),
+                        'optional' => TRUE,
+                    ),
+                ),
+            ),
+        ),
+        'apitest' => array(
+            'index' => array(
+                'help' => 'Retrieves a listing of playlist',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_test_playlist_index',
+                'access callback' => 'user_access',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'mac_eth',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac_eth'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'complete_videos',
+                        'type' => 'string',
+                        'source' => array('param' => 'complete_videos'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'playlist_id',
+                        'type' => 'string',
+                        'source' => array('param' => 'playlist_id'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'broadcast_id',
+                        'type' => 'string',
+                        'source' => array('param' => 'broadcast_id'),
+                        'optional' => TRUE,
+                    ),
+                ),
+
+            ),
+        ),
+        'apitest1' => array(
+            'index' => array(
+                'help' => 'Retrieves a listing of playlist',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_test_playlist_index1',
+                'access callback' => 'user_access',
+                'access arguments' => array('access content'),
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'mac_eth',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac_eth'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'complete_videos',
+                        'type' => 'string',
+                        'source' => array('param' => 'complete_videos'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'playlist_id',
+                        'type' => 'string',
+                        'source' => array('param' => 'playlist_id'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'broadcast_id',
+                        'type' => 'string',
+                        'source' => array('param' => 'broadcast_id'),
+                        'optional' => TRUE,
+                    ),
+
+
+                ),
+
+            ),
+        ),
+        'logging' => array(
+            'create' => array(
+                'help' => 'Creates box logs',
+                'file' => array('file' => 'inc', 'module' => 'playlist'),
+                'callback' => '_logging_service_create',
+                'access arguments' => array('create'),
+                'access callback' => '_logging_access',
+                'access arguments append' => FALSE,
+                'args' => array(
+                    array(
+                        'name' => 'mac',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'mac_eth',
+                        'type' => 'string',
+                        'source' => array('param' => 'mac_eth'),
+                        'optional' => TRUE,
+                    ),
+                    array(
+                        'name' => 'data',
+                        'type' => 'string',
+                        'source' => array('param' => 'data'),
+                        'optional' => TRUE,
+                    ),
+                ),
+            ),
+        ),
+    );
+}
+
+function _logging_launcher_access(){
+    return TRUE;
+}
+function _playlist_completed_access(){
+    return TRUE;
+}
+function _logging_access(){
+    return TRUE;
+}
+?>

@@ -1,0 +1,21 @@
+<?php
+
+function adtrue_alter_menu_schema() {
+	$schema = array();
+	$schema['menu_icon'] = array(
+		'description' => 'Store menu icon for specific menu item.',
+		'fields' => array(
+			'menu_item_id' => array(
+				'type' => 'int',
+		        'unsigned' => TRUE,
+		        'default' => 0,
+			),
+			'icon_value' => array(
+				'type' => 'varchar',
+		        'length' => 255,
+		        'default' => '',
+			),
+		),
+	);
+	return $schema;
+}

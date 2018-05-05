@@ -1,0 +1,43 @@
+<?php 
+
+// Creating table when install mdule
+function adstrue_podcast_schema() {
+	$schema = array();
+	$schema['store_list_playlist'] = array(
+		'description' => 'The table store the playlist list id and start date and enddate',
+		'fields' => array(
+			'tid' => array(
+				'description' => 'The tid taolichphatsong',
+				'type' => 'int',
+			),
+			'name' => array(
+				'description' => 'Tên lịch phát sóng',
+				'type' => 'varchar',
+				'length' => 255
+			),
+			'nid' => array(
+				'description' => 'The node id attached to playlist',
+				'type' => 'int',
+			),
+			'default' => array(
+				'description' => 'Set default for playlist',
+				'type' => 'int',
+				'length' => 2,
+				'default' => 0,
+			),
+			'playlist_id' => array(
+				'description' => 'The playlist id',
+				'type' => 'int',
+			),
+			'start_time' => array(
+				'description' => 'Unix time start to play playlist',
+				'type' => 'int',
+			),
+			'end_time' => array(
+				'description' => 'Unix time end playing playlist',
+				'type' => 'int',
+			),
+		),
+	);
+	return $schema;
+}

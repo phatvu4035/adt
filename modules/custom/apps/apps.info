@@ -1,0 +1,6 @@
+name = AdTRUE Apps Service
+description = Services for the Apps content type.
+package = AdTRUE
+dependencies[] = services
+files[] = apps.inc
+core = 7.x

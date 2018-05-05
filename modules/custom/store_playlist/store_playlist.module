@@ -1,0 +1,220 @@
+<?php
+/*
+* implement hook_menu()
+*/
+function store_playlist_menu() {
+	$items = array();
+	// Add node to slide content type
+	$items['store-playlist/%'] = array(
+		'title' => 'Quản lí playlist trong store',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('store_playlist_manage_form',1),
+		'access callback' => TRUE,
+		'type' => MENU_NORMAL_ITEM
+	);
+
+	$items['playlist/search_path'] = array(
+		'title' => 'Searching Playlist',
+		'page callback' => 'load_playlist_suggestion',
+		'access arguments' =>TRUE,
+		'type' => MENU_NORMAL_ITEM
+	);
+
+	return $items;
+}
+
+
+/*
+* Form quan li playlist trong store
+*/
+function store_playlist_manage_form($form,&$form_state,$value) {
+   $form['hidden_tid'] = array(
+   		'#type' => 'hidden',
+   		'#title' => t('Tên cửa hàng'),
+   		'#default_value' => (isset($term)) ? $term->tid : '',
+    );
+
+    $form['fieldset_info'] = array(
+   		'#title' => t('Nhập thông tin cửa hàng'),
+   		'#type' => 'fieldset',
+   		'#weight' => 5, 
+	    '#collapsible' => TRUE, 
+	    '#collapsed' => FALSE,
+   );
+	// Ten cửa hàng
+	$form['fieldset_info']['label_storeplaylist'] = array(
+   		'#type' => 'textfield',
+   		'#title' => t('Tên danh sách phát cửa hàng'),
+    );
+    $form['fieldset_info']['playlist_id'] = array(
+   		'#type' => 'textfield',
+   		'#title' => t('Tìm playlist'),
+   		'#autocomplete_path' =>'playlist/search_path',
+    );
+	// Tên người liên hệ
+    $form['fieldset_info']['description_storeplaylist'] = array(
+   		'#type' => 'textarea',
+   		'#title' => t('Ghi chú'),
+    );
+
+    $form['fieldset_property'] = array(
+   		'#title' => t('Nhập nơi quản lí'),
+   		'#type' => 'fieldset',
+   		'#weight' => 5, 
+	    '#collapsible' => TRUE, 
+	    '#collapsed' => FALSE,
+    );
+
+    $form['fieldset_property']['company_id'] = array(
+   		'#type' => 'select',
+   		'#title' => t('Tên công ty'),
+   		'#options' => $cSelect,
+   		'#ajax' => array(
+   			'callback' => 'load_region_by_company',
+   			'method' =>'replace',
+   			'wrapper' => 'region-wrapper',
+   		),
+   	    '#default_value' =>  (isset($comO)) ? array($comO->tid => $comO->name) : $cSelect,
+   	    '#description' => t('Chọn công ty quản lí khu vực'),
+    );
+
+    $form['fieldset_property']['region_id'] = array(
+   		'#type' => 'select',
+   		'#prefix' => '<div id="region-wrapper">',
+   		'#title' => t('Chọn khu vực'),
+   		'#options' => (isset($regO)) ? array($regO->tid => $regO->name) : array(0 => t('Chọn')),
+   		'#ajax' => array(
+   			'callback' => 'load_province_by_region',
+   			'method' =>  'replace',
+   			'wrapper' => 'province-wrapper',
+   		),
+   	    '#default_value' => (isset($regO)) ? array($regO->tid => $regO->name) : array(0 => t('Chọn')),
+   	    '#suffix' => '</div>',
+   	    '#description' => t('Chọn vùng miền'),
+   	    '#validated' => TRUE
+    );
+
+    $form['fieldset_property']['province_id'] = array(
+   		'#type' => 'select',
+   		'#prefix' => '<div id="province-wrapper">',
+   		'#title' => t('Chọn tỉnh thành'),
+   		'#options' =>  array(0 => t('Chọn')),
+   		'#ajax' => array(
+   			'callback' => 'mac_load_store_by_province',
+   			'method' =>  'replace',
+   			'wrapper' => 'store-wrapper',
+   		),
+   	    '#default_value' => array(0 => t('Chọn')),
+   	    '#suffix' => '</div>',
+   	    '#validated' => TRUE
+    );
+    $form['fieldset_property']['store_id'] = array(
+   		'#type' => 'select',
+   		'#prefix' => '<div id="store-wrapper">',
+   		'#title' => t('Chọn cửa hàng'),
+   		'#options' =>  array(0 => t('Chọn')),
+   	    '#default_value' => array(0 => t('Chọn')),
+   	    '#suffix' => '</div>',
+   	    '#validated' => TRUE
+    );
+    $form['fieldset_property']['submit'] = array(
+  		'#type' => 'submit',
+  		'#weight' => 6,
+  		'#value' => t('Xác nhận')
+	);
+	return $form;
+}
+
+/*
+* AJAX de load cac khu vuc dua tren cong ty
+*/
+function mac_load_region_by_company($form,$form_state) {
+   $matches = array();
+   $company_id = $form_state['values']['company_id'];
+   $tids = array();
+   // Get taxonomy by field value
+    $tids = db_select('field_data_field_region_company_id','rbycom')
+             ->fields('rbycom',array('entity_id'))
+             ->condition('field_region_company_id_tid',$company_id,'=')
+             ->execute()
+             ->fetchCol();
+    $terms = taxonomy_term_load_multiple($tids);
+
+	foreach($terms as $term) {
+		$matches[$term->tid] = $term->name;
+	}
+	if(count($matches) == 0) {
+		$matches = array(0 => t('Chọn'));
+	}
+    $form['region_id']['#options'] = array(0=>t('Chọn')) + $matches;
+    return $form['region_id'];
+}
+
+/*
+* AJAX de load tinh thanh theo khu vuc
+*/
+function mac_load_province_by_region($form,$form_state) {
+	$matches = array();
+	$region_id = $form_state['values']['region_id'];
+	// Get taxonomy by field value
+    $tids = array();
+   // Get taxonomy by field value
+    $tids = db_select('field_data_field_region_provice_id','pbyrg')
+             ->fields('pbyrg',array('entity_id'))
+             ->condition('field_region_provice_id_tid',$region_id,'=')
+             ->execute()
+             ->fetchCol();
+    $terms = taxonomy_term_load_multiple($tids);
+	foreach($terms as $term) {
+		$matches[$term->tid] = $term->name;
+	}
+	if(count($matches) == 0) {
+		$matches = array(0 => t('Chọn'));
+	}
+
+	$form['province_id']['#options'] = array(0=>t('Chọn')) + $matches;
+	return $form['province_id'];
+}
+
+/*
+* Ajax de load cac cua hang dua tren tinh thanh
+*/
+function mac_load_store_by_province($form,&$form_state) {
+	$matches = array();
+	$province_id = $form_state['values']['province_id'];
+	$tids = array();
+	// Get taxonomy by field value
+    $tids = db_select('field_data_field_province_store_id','stbypr')
+             ->fields('stbypr',array('entity_id'))
+             ->condition('field_province_store_id_tid',$province_id,'=')
+             ->execute()
+             ->fetchCol();
+    $terms = taxonomy_term_load_multiple($tids);
+	foreach($terms as $term) {
+		$matches[$term->tid] = $term->name;
+	}
+	if(count($matches) == 0) {
+		$matches = array(0 => t('Chọn'));
+	}
+
+
+	$form['store_id']['#options'] = array(0=>t('Chọn')) + $matches;
+	return $form['store_id'];
+}
+
+// Load suggest to add playlist
+function load_playlist_suggestion($playlist_string = '') {
+	$matches = array();
+
+	$result = db_select('node','n')
+			  ->fields('n')
+			  ->condition('title', '%'.db_like($playlist_string).'%','LIKE')
+			  ->condition('type','playlist','=')
+			  ->execute()
+			  ->fetchAll();
+	foreach($result as $playlist) {
+		$matches[$playlist->id] = $playlist->title;
+	}
+
+	drupal_json_output($matches);
+}

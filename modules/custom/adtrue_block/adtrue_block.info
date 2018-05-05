@@ -1,0 +1,9 @@
+name = AdTRUE Block Module
+description = Module Block cho dịch vụ Adtrue.vn
+package = AdTRUE
+core = 7.x
+; Information added by Drupal.org packaging script on 2013-12-21
+version = "7.x-32"
+core = "7.x"
+project = "adtrue"
+datestamp = "1387659206"

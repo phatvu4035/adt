@@ -1,0 +1,27 @@
+<?php
+include_once drupal_get_path('module','upload_content').'/inc/upload_content.inc';
+/*
+* Implememt hook_menu()
+*/
+function upload_content_menu() {
+	$items = array();
+	$items['upload-noidung/%'] = array(
+		'title' => 'Tải nội dung lên trên playlist',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('upload_content_media_server',1),
+		'access arguments' => array(0),
+		'access callback' => TRUE,
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['danhsach-noidung'] = array(
+		'title' => 'Tải nội dung lên trên playlist',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('danhsach_noidung_video'),
+		'access arguments' => array(0),
+		'access callback' => TRUE,
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	return $items;
+}
+

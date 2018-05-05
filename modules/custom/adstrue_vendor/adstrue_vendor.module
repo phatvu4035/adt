@@ -1,0 +1,174 @@
+<?php
+include_once drupal_get_path('module','adstrue_vendor').'/inc/adstrue_vendor.inc';
+include_once drupal_get_path('module','adstrue_vendor').'/inc/company_adtrue.inc';
+include_once drupal_get_path('module','adstrue_vendor').'/inc/region_adtrue.inc';
+include_once drupal_get_path('module','adstrue_vendor').'/inc/province_adtrue.inc';
+include_once drupal_get_path('module','adstrue_vendor').'/inc/store_adtrue.inc';
+
+/*
+/*
+* Implement hook_menu()
+*/
+function adstrue_vendor_permission() {
+    $permissions['device manager'] = array(
+        'title' => t('Quyền quản lý Danh mục'),
+        'description' => t('Quyền quản lý Danh mục'),
+    );
+    return $permissions;
+}
+
+function adstrue_vendor_menu() {
+  $items = array();
+  $items['company'] = array(
+    'title' => t('Công ty'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('company_adstrue_vendor'),
+    'access arguments' => array('device manager'),
+    'weight' => 1,
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/company_adtrue.inc',
+  );
+  $items['company/edit/%'] = array(
+    'title' => 'Cập nhật công ty',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_update_company',2),
+    'access arguments' => array('device manager'),
+    'description' => 'Cập nhật công ty',
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/company_adtrue.inc',
+  );
+  $items['company/add'] = array(
+    'title' => 'Thêm công ty',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_add_company'),
+    'access arguments' => array('device manager'),
+    'description' => 'Thêm công ty',
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/company_adtrue.inc',
+  );
+
+  $items['company/delete/%'] = array(
+    'title' => 'Thêm công ty',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('delete_adstrue_vendor_company',2),
+    'access arguments' => array('device manager'),
+    'description' => 'Thêm công ty',
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/company_adtrue.inc',
+  );
+
+  $items['region'] = array(
+    'title' => t('Vùng miền'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('region_adstrue_vendor',1),
+    'access arguments' => array('device manager'),
+    'weight' => 1,
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/region_adtrue.inc',
+  );
+  $items['region/edit/%'] = array(
+    'title' => 'Cập nhật vùng miền',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_update_region',2),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/region_adtrue.inc',
+
+  );
+  $items['region/add'] = array(
+    'title' => 'Thêm vùng miền',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_add_region'),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/region_adtrue.inc',
+  );
+
+  $items['region/delete/%'] = array(
+    'title' => 'Thêm vùng miền',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('delete_adstrue_vendor_region',2),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/region_adtrue.inc',
+  );
+
+  $items['province'] = array(
+    'title' => t('Tỉnh thành'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('province_adstrue_vendor'),
+    'access arguments' => array('device manager'),
+    'weight' => 1,
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/province_adtrue.inc',
+  );
+
+  $items['province/edit/%'] = array(
+    'title' => 'Cập nhật tỉnh thành',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_update_provice',2),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/province_adtrue.inc',
+  );
+  $items['province/add'] = array(
+    'title' => 'Thêm tỉnh thành',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_add_provice'),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/province_adtrue.inc',
+  );
+  $items['province/delete/%'] = array(
+    'title' => 'Thêm tỉnh thành',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('delete_adstrue_vendor_province',2),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/province_adtrue.inc',
+  );
+
+  $items['store'] = array(
+    'title' => t('Cửa hàng'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('store_adstrue_vendor'),
+    'access arguments' => array('device manager'),
+    'weight' => 1,
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/store_adtrue.inc',
+  );
+  $items['store/edit/%'] = array(
+    'title' => 'Cập nhật cửa hàng',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_update_store',2),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/store_adtrue.inc',
+  );
+  $items['store/add'] = array(
+    'title' => 'Thêm cửa hàng',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('adstrue_vendor_add_store'),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/store_adtrue.inc',
+  );
+  $items['store/delete/%'] = array(
+    'title' => 'Thêm/Sửa cửa hàng',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('delete_adstrue_vendor_store',2),
+    'access arguments' => array('device manager'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'inc/store_adtrue.inc',
+  );
+  
+  $items['store/import'] = array(
+      'title' => 'Import cửa hàng',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('adstrue_vendor_import_store'),
+      'access arguments' => array('device manager'),
+      'type' => MENU_NORMAL_ITEM,
+      'file' => 'inc/store_adtrue.inc',
+  );
+  return $items;
+}

@@ -1,0 +1,77 @@
+<?php
+include_once drupal_get_path('module','adtrue_cat_content').'/inc/adtrue_cat_content.inc';
+/*
+* Implementing hook_permission()
+*/
+
+function adtrue_cat_content_permission() {
+	$permissions['view danhmuc noidung public'] = array(
+        'title' => t('Quyền XEM DANH MỤC NỘI DUNG đã tải lên trên hệ thống CMSKT'),
+        'description' => t('Phân quyền hệ thống CMSKT'),
+    );
+    $permissions['edit danhmuc noidung public'] = array(
+        'title' => t('Quyền SỬA DANH MỤC NỘI DUNG đã tải lên trên hệ thống CMSKT'),
+        'description' => t('Phân quyền hệ thống CMSKT'),
+    );
+    $permissions['create danhmuc noidung public'] = array(
+        'title' => t('Quyền THÊM DANH MỤC NỘI DUNG đã tải lên trên hệ thống CMSKT'),
+        'description' => t('Phân quyền hệ thống CMSKT'),
+    );
+    $permissions['delete danhmuc noidung public'] = array(
+        'title' => t('Quyền XÓA DANH MỤC NỘI DUNG đã tải lên trên hệ thống CMSKT'),
+        'description' => t('Phân quyền hệ thống CMSKT'),
+    );
+    $permissions['manage danhmuc noidung public'] = array(
+        'title' => t('Quyền QUẢN LÍ DANH MỤC NỘI DUNG đã tải lên trên hệ thống CMSKT'),
+        'description' => t('Phân quyền hệ thống CMSKT'),
+    );
+    return $permissions;
+}
+/*
+* Impelement hook_menu()
+*/
+function adtrue_cat_content_menu() {
+	$items = array();
+	$items['danhmuc/noidung/list'] = array(
+		'title' => 'Cập nhật danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('category_content_in_list_manage'),
+		'access arguments' => array('manage danhmuc noidung public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['danhmuc/noidung/edit/%'] = array(
+		'title' => 'Cập nhật danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('category_content_in_editing',3),
+		'access arguments' => array('edit danhmuc noidung public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['danhmuc/noidung/add'] = array(
+		'title' => 'Tạo danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('category_content_in_adding'),
+		'access arguments' => array('create danhmuc noidung public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['danhmuc/noidung/delete/%'] = array(
+		'title' => 'Xóa danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('category_content_in_deleting',3),
+		'access arguments' => array('delete danhmuc noidung public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['danhmuc/noidung/view'] = array(
+		'title' => 'Cập nhật danh mục',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('category_content_in_show'),
+		'access arguments' => array('view danhmuc noidung public'),
+		'access callback' => array(TRUE),
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	return $items;
+}

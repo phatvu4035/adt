@@ -1,0 +1,223 @@
+<?php 
+
+include_once drupal_get_path('module','playlist_management').'/inc/playlist_management.inc';
+/*
+* Implement hook_menu()
+*/
+function playlist_management_menu() {
+	$items['playlist/%'] = array(
+		'title' => 'Quản lí playlist',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('control_playlist_form',1),
+		'access arguments' => array(0),
+		'access callback' => TRUE,
+		'type' => MENU_NORMAL_ITEM
+	);
+  $items['playlist/list'] = array(
+    'title' => 'Danh sách playlist',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('list_playlist_job'),
+    'access arguments' => array(0),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM
+  );
+
+	return $items;
+}
+
+function control_playlist_form($form,&$form_state,$value) {
+  drupal_add_js(drupal_get_path('module','playlist_management').'/assets/js/filter_table.js');
+  drupal_add_css(drupal_get_path('module','playlist_management').'/assets/css/playlist.css');
+  if($value !== 'add' && $value !== 'edit') {
+      drupal_not_found();
+  } else {
+      $path = current_path();
+      $playlist_id = arg(2,$path);
+      $playlist = (isset($playlist_id)) ? node_load($playlist_id) : NULL;
+
+      // lay toan bo id noi dung trong playlist
+      $ndIds = db_select('field_data_field_slides_playlist','nid')
+           ->fields('nid',array('field_slides_playlist_nid'))
+           ->condition('entity_id',$playlist_id)
+           ->execute()
+           ->fetchCol();
+  }
+	$form['name_playlist'] = array(
+	   '#type' => 'textfield', 
+     '#title' => t('Tên playlist'), 
+     '#maxlength' => 120,
+     '#default_value' => isset($playlist) ? $playlist->title : null,
+	);
+  $form['id_playlist'] = array(
+     '#type' => 'hidden', 
+     '#value' => (isset($playlist_id)) ? $playlist_id : null,
+  );
+
+	$form['find_content'] = array(
+		'#type' => 'item',
+        '#markup' =>'<input type="text" id="myInput" onkeyup="findContent()" placeholder="Tìm tên nội dung ...">',
+        '#prefix' => '<div class="box-find-content">',
+        '#suffix' => '</div>'
+	);
+
+	$form['show_grid_content'] = array(
+        '#type' => 'container',
+        '#weight' => 2,
+        '#attributes' => array(
+            'class' => array('box','box-success')
+        ),
+        '#prefix' => '<div class="grid_content">',
+        '#suffix' => '</div>'
+    );
+
+    // Header list all content
+    $header_list = '<div class="col-md-1 stt">
+        <p>STT</p>
+        </div>
+        <div class="col-md-6 name_noidung">
+          <p>Tên nội dung</p>
+        </div>
+        <div class="col-md-4 chonnoidung">
+           Chọn
+        </div>
+      
+    ';
+
+    $form['show_grid_content']['header'] = array(
+        '#type' => 'item',
+        '#markup' =>$header_list,
+        '#prefix' => '<div class="box-header with-border row">',
+        '#suffix' => '</div>'
+    );
+    
+    
+    $allNds = db_select('node','n')
+              ->fields('n',array('nid'))
+              ->condition('type','slides')
+              ->execute()
+              ->fetchCol();
+
+    // Lay mang tong cac node noi dung tru di mang cua id noi dung trong playlist
+    if(isset($ndIds) && !empty($ndIds)) {
+        $reNd = array_diff($allNds, $ndIds);
+        $ndPlay = node_load_multiple($ndIds);
+        $diffNd = node_load_multiple($reNd);
+        $diffNd = $ndPlay + $diffNd;
+    } else {
+        $ndPlay = array();
+        rsort($allNds);
+        $diffNd = node_load_multiple($allNds);
+        $diffNd = $ndPlay + $diffNd;
+    }
+
+    $index = count($diffNd);
+    $i = 1;
+    $form['countcontent'] = array(
+        '#type' => 'hidden',
+        '#value' => $index,
+    );
+    // Creating form with all noidung
+    foreach($diffNd as $snd) {
+    	$form['show_grid_content']['body']['row'.$i] = array(
+          '#type' => 'container',
+          '#weight' => 2,
+          '#attributes' => array(
+              'class' => array()
+          ),
+          '#prefix' => '<div class="noidung_rec">',
+          '#suffix' => '</div>'
+      );
+      $form['show_grid_content']['body']['row'.$i]['stt'.$i] = array(
+          '#type' => 'item',
+          '#markup' => $i,
+          '#prefix' => '<div class="col-md-1">',
+          '#suffix' => '</div>'
+     );
+     $form['show_grid_content']['body']['row'.$i]['noidung_id'.$i] = array(
+          '#type' => 'hidden',
+          '#value' => $snd->nid,
+     );
+     $form['show_grid_content']['body']['row'.$i]['noiung_name'.$i] = array(
+          '#type' => 'item',
+          '#markup' => '<a href="">'.$snd->title.'</a>',
+          '#prefix' => '<div class="col-md-6 mytd">',
+          '#suffix' => '</div>'
+     );
+     $form['show_grid_content']['body']['row'.$i]['chon'.$i] = array(
+          '#type' =>'checkbox',
+          '#prefix' => '<div class="col-md-4 ">',
+          '#suffix' => '</div>',
+     );
+     $i = $i + 1;
+    }
+
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#weight' => 6,
+        '#prefix' => '<div>',
+        '#value' => t('Cập nhật'),
+        '#suffix' => '</div>',
+    );
+
+    return $form;
+
+}
+
+function control_playlist_form_submit($form,&$form_state) {
+   global $user;
+   drupal_add_js(drupal_get_path('module','playlist_management').'/assets/js/filter_table.js');
+   drupal_add_css(drupal_get_path('module','playlist_management').'/assets/css/playlist.css');
+   $name_playlist = $form_state['values']['name_playlist'];
+   $countnd = $form_state['values']['countcontent'];
+   $playlist_id = $form_state['values']['id_playlist'];
+   $playlist = node_load($playlist_id);
+
+   // Lay toan bo id cua noi dung da gan vao playlist
+   $ndAr = db_select('field_data_field_slides_playlist','nid')
+           ->fields('nid',array('field_slides_playlist_nid'))
+           ->condition('entity_id',$playlist_id)
+           ->execute()
+           ->fetchCol();
+   $ids = array();
+   $j=1;
+   for($i = 1; $i <= $countnd; $i++) {
+      if((int)$form_state['values']['chon'.$i] > 0) {
+          $ndId = $form_state['values']['noidung_id'.$i];
+          // Cap nhat noi dung cho playlist
+          if($playlist_id) {
+              if(!in_array($ndId, $ndAr)) {
+                $playlist->field_slides_playlist['und'][] = array('nid' => $ndId);
+              }
+          } else {
+               $ids[] = $ndId;
+          }
+          // Save updated playlist
+          
+      }
+      $j++;
+  }
+  if($playlist) {
+      $status = node_save($playlist);
+      if($status) {
+          drupal_set_message('Cập nhật thành công playlist');
+      }
+  }
+
+  if(!$playlist_id) {
+      $node = new stdClass();
+      $node->type = 'playlist';
+      $node->title = $name_playlist;
+      $node->language = LANGUAGE_NONE;
+      $node->uid = $user->uid;
+      foreach($ids as $id) {
+          $node->field_slides_playlist[$node->language][] = array('nid' => $id);
+      }
+      $status = node_save($node);
+      if($status) {
+         drupal_set_message('Tạo  playlist thành công');
+      }
+  }
+  
+  
+}

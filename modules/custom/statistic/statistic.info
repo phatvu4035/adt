@@ -1,0 +1,6 @@
+name = Module Thống kê hệ thống AdTRUE
+description = Module Thống kê hệ thống AdTRUE.
+package = AdTRUE
+dependencies[] = adtrue
+files[] = inc/adtrue.inc
+core = 7.x

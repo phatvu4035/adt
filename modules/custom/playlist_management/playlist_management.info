@@ -1,0 +1,5 @@
+name = Playlist Management
+description = Creating and Delete Content in Playlist
+package = AdTRUE
+files[] = inc/playlist_management.inc
+core = 7.x

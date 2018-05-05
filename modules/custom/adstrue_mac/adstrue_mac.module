@@ -1,0 +1,157 @@
+<?php 
+include_once drupal_get_path('module','adstrue_mac').'/inc/config.inc';
+include_once drupal_get_path('module','adstrue_mac').'/inc/function_mac.inc';
+include_once drupal_get_path('module','adstrue_mac').'/inc/adstrue_mac.inc';
+include_once drupal_get_path('module','adstrue_mac').'/inc/diary_mac.inc';
+/*
+* hook_menu()
+*/
+
+function adstrue_mac_permission() {
+
+    $permissions['adtrue device edit'] = array(
+        'title' => t('Quyền quản sửa Thông tin Thiết bị'),
+        'description' => t('Quyền quản lý sửa Thông tin Thiết bị'),
+    );
+    $permissions['adtrue device delete'] = array(
+        'title' => t('Quyền quản xóa Thiết bị khỏi hệ thống'),
+        'description' => t('Quyền quản xóa Thiết bị khỏi hệ thống'),
+    );
+    $permissions['adtrue device add'] = array(
+        'title' => t('Quyền quản tạo Thiết bị trên hệ thống'),
+        'description' => t('Quyền quản tạo Thiết bị trên hệ thống'),
+    );
+    $permissions['adtrue device view'] = array(
+        'title' => t('Quyền xem thông tin Thiết bị'),
+        'description' => t('Quyền xem thông tin Thiết bị'),
+    );
+    $permissions['adtrue device manage by list'] = array(
+        'title' => t('Quyền quản lí Thiết bị'),
+        'description' => t('Quyền quản lí  Thiết bị'),
+    );
+
+    return $permissions;
+}
+
+function adstrue_mac_menu() {
+	$items = array();
+	// Add node to slide content type
+	$items['mac/edit/%'] = array(
+		'title' => 'Cập nhật địa chỉ MAC',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('adstrue_mac_update_property',2),
+        'access arguments' => array('adtrue device edit'),
+        'description' => 'Thêm thiết bị',
+    	'type' => MENU_NORMAL_ITEM
+    );
+    $items['mac/add'] = array(
+        'title' => 'Thêm thiết bị',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('adstrue_mac_add_property'),
+        'access arguments' => array('adtrue device add'),
+        'description' => 'Cập nhật thiết bị',
+        'type' => MENU_NORMAL_ITEM
+    );
+    $items['mac/delete/%'] = array(
+        'title' => 'Xóa thiết bị',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('adstrue_mac_delete',2),
+        'access arguments' => array('adtrue device delete'),
+        'description' => 'Thêm thiết bị',
+        'type' => MENU_NORMAL_ITEM
+    );
+	$items['mac/search_path'] = array(
+		'title' => 'Searching MAC',
+		'page callback' => 'load_mac_suggestion',
+		'access arguments' => array('access content'),
+		'type' => MENU_NORMAL_ITEM
+	);
+    $items['mac/search_sap/%'] = array(
+        'title' => 'Searching store by Sap',
+        'page callback' => 'load_store_mac_suggestion',
+        'page arguments' => array(2),
+        'access arguments' => array('access content'),
+        'type' => MENU_NORMAL_ITEM
+    );
+
+
+    $items['mac/list'] = array(
+        'title' => 'Danh sách Thiết bị',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('manage_mac_by_list'),
+        'access arguments' => array('adtrue device manage by list'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['mac/view'] = array(
+        'title' => 'Danh sách MAC',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('manage_mac_by_view'),
+        'access arguments' => array('adtrue device view'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['mac/update/created'] = array(
+        'title' => 'Cập nhật ngày gán thiết',
+        'page callback' => 'mac_update_created',
+        'access arguments' => array(TRUE),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['mac/check/history/%'] = array(
+        'title' => 'Nhật kí thiết bị',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('mac_check_history_log',3),
+        'access arguments' => array('adtrue device view'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['mac/check/history/log/%/edit'] = array(
+        'title' => 'Sửa nhật kí thiết bị',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('mac_check_history_log_edit',4),
+        'access arguments' => array('adtrue device edit'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['mac/check/history/log/%/delete'] = array(
+        'title' => 'Sửa nhật kí thiết bị',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('mac_check_history_log_delete',4),
+        'access arguments' => array('adtrue device delete'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['mac/check/history/%/add'] = array(
+        'title' => 'Thêm nhật kí thiết bị',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('mac_check_history_log_add',3),
+        'access arguments' => array('adtrue device edit'),
+        'weight' => 1,
+        'type' => MENU_NORMAL_ITEM,
+    );
+	return $items;
+}
+
+/*
+* hook_taxonomy_term_presave()
+*/
+function adstrue_mac_taxonomy_term_presave($term) {
+    $user = user_load_by_name('admin');
+
+    $voca = taxonomy_vocabulary_machine_name_load('mac_address');
+
+    if( !isset($term->tid) && $term->vid == $voca->vid ) {
+        $term->field_date_created_at['und'][0]['value'] = time();
+        $term->field_mac_person_add['und'][0]['uid'] = $user->uid;
+    }
+
+    if(!isset($term->field_mac_person_add['und'][0]['uid']) && $term->vid == $voca->vid ) {
+        $term->field_mac_person_add['und'][0]['uid'] = $user->uid;
+    }
+
+    return $term;
+}
+
+

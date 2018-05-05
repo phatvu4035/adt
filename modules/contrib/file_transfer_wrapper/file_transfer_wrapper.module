@@ -1,0 +1,350 @@
+<?php
+
+/**
+ * @file
+ * This custom module provides wrapper functions to transfer(upload/download)
+ * files to remote file server.
+ */
+use \Exception as Exception;
+
+module_load_include('inc', 'file_transfer_wrapper', 'includes/FtwConnectionFactory');
+
+/**
+ * Implements hook_permission().
+ */
+function file_transfer_wrapper_permission() {
+  return array(
+    'Administer remote file server configuration' => array(
+      'title' => t('Administer remote file server configuration'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function file_transfer_wrapper_menu() {
+  $items = array();
+  $weight = 0;
+  $items['admin/config/file_transfer_connections'] = array(
+    'title' => 'File Transfer Connections',
+    'description' => "Remote file server connection settings to transter files back and forth.",
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('file_transfer_wrapper_config_form'),
+    'access arguments' => array('Administer remote file server configuration'),
+    'weight' => $weight++,
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+function file_transfer_wrapper_config_form($form, &$form_state) {
+
+  // ***** client Side Example Code to Test Connection ***** //
+  /* try {
+    $classObj = ftw\FtwConnectionFactory::build('');
+    $classObj->downloadFile('data_epsilon.csv');
+    }
+    catch(Exception $e) {
+    drupal_set_message($e->getMessage(), 'error');
+    } */
+  // ***** END ***** //
+
+	/*Drupal add JS to resolve horizontal scroll issue*/
+	drupal_add_js(drupal_get_path('module', 'file_transfer_wrapper') . '/js/file_transfer_wrapper.js');
+
+  $form['#tree'] = TRUE;
+
+  $form['description'] = array(
+    '#type' => 'item',
+    '#title' => t('A form to add settings of multiple file server connections.'),
+  );
+
+  // ***** CONNECTION LIST TABLE ***** //
+  // List down all the saved connections.
+  $form['saved_connection'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Saved Connections'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  // Generate Table array to theme it.
+  $table_data = variable_get('file_transfer_wrapper_connections', array());
+  $row_array = array();
+  foreach ($table_data as $row) {
+    $col_array = array();
+    foreach ($row as $key => $col) {
+      if ($key === 'private_key' || $key === 'password') {
+        $col = substr($col, 0, 25);
+        $col .= "...";
+      }
+      $col_array[$key] = array('data' => $col, 'class' => 'css-class-of-cells');
+    }
+    $col_array[] = l('Edit', 'admin/config/file_transfer_connections', array('query' => array('name' => $col_array['connection_name']['data'], 'op' => 'edit')))
+        . "<br/>" . l('Delete', 'admin/config/file_transfer_connections', array('query' => array('name' => $col_array['connection_name']['data'], 'op' => 'del')))
+        . "<br/>" . l('Test', 'admin/config/file_transfer_connections', array('query' => array('name' => $col_array['connection_name']['data'], 'op' => 'test')));
+
+    $row_array[] = array(
+      //'data' contains cell data.
+      'data' => $col_array,
+      //Row attributes, e.g. 'class'
+      'class' => array('css-class-of-rows'),
+    );
+  }
+
+  $arr_rows = $row_array;
+  $headers = array("Name", "Library Type", "Conn Type", "Auth Type", "Host", "Port", "Userid", "Password", "Private Key", "Remote Dir", "Remote File Prefix", "Download Type", "Local Dir", "Action");
+
+  if (!empty($table_data)) {
+    $list = theme('table', array('header' => $headers, 'rows' => $arr_rows));
+  }
+  else {
+    $list = t('No connections added yet.');
+  }
+
+
+  $form['saved_connection']['list'] = array(
+    '#type' => 'item',
+    '#markup' => $list,
+  );
+
+  if (isset($_GET['op']) && isset($_GET['name']) && isset($table_data[$_GET['name']])) {
+    switch ($_GET['op']) {
+      case 'edit':
+        $loaded_connection = $table_data[$_GET['name']];
+        break;
+      case 'del':
+        file_transfer_wrapper_delete_connection($_GET['name']);
+        break;
+      case 'test':
+        file_transfer_wrapper_test_connection($_GET['name']);
+        break;
+    }
+  }
+
+  // ***** CONNECTION ADD/EDIT FORM ***** //
+  // Form for adding a new connection.
+  $form['connection'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Add Connections'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['connection']['connection_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Connection name'),
+    '#description' => t("Enter connection name."),
+    '#default_value' => (isset($loaded_connection['connection_name'])) ? $loaded_connection['connection_name'] : NULL,
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#required' => TRUE,
+    '#attributes' => (isset($loaded_connection['connection_name'])) ? array('disabled' => 'disabled') : NULL,
+  );
+
+  $form['connection']['connection_machine_name'] = array(
+    '#title' => t('connection_machine_name'),
+    '#required' => FALSE,
+    '#type' => 'hidden',
+  );
+
+  $connection_library = array(
+    'phpseclib' => t('PHPSECLIB'),
+  );
+
+  $form['connection']['connection_library'] = array(
+    '#type' => 'radios',
+    '#title' => t('Preferred Library/Extension:'),
+    '#options' => $connection_library,
+    '#default_value' => (isset($loaded_connection['connection_library'])) ? $loaded_connection['connection_library'] : NULL,
+    '#description' => t('Select the preferred extension/library.'),
+    '#required' => TRUE,
+  );
+
+  $connection_type = array(
+    'sftp' => t('SFTP'),
+  );
+
+  $form['connection']['connection_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Connection Type:'),
+    '#options' => $connection_type,
+    '#default_value' => (isset($loaded_connection['connection_type'])) ? $loaded_connection['connection_type'] : NULL,
+    '#description' => t('Select the connection type.'),
+    '#required' => TRUE,
+  );
+
+  $authentication_options = array(
+    'password' => t('Password'),
+    'private_key' => t('Private Key'),
+  );
+
+  $form['connection']['authentication_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Authentication Type:'),
+    '#options' => $authentication_options,
+    '#default_value' => (isset($loaded_connection['authentication_type'])) ? $loaded_connection['authentication_type'] : NULL,
+    '#required' => TRUE,
+    '#description' => t('Select the authentication type.'),
+  );
+
+  $form['connection']['host'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Host:'),
+    '#default_value' => (isset($loaded_connection['host'])) ? $loaded_connection['host'] : NULL,
+    '#description' => t("Enter host."),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#required' => TRUE,
+  );
+
+  $form['connection']['port'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Port:'),
+    '#default_value' => (isset($loaded_connection['port'])) ? $loaded_connection['port'] : NULL,
+    '#description' => t("Enter port."),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#required' => TRUE,
+  );
+
+  $form['connection']['uid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Username:'),
+    '#default_value' => (isset($loaded_connection['uid'])) ? $loaded_connection['uid'] : NULL,
+    '#description' => t("Enter username."),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#required' => TRUE,
+  );
+
+  foreach ($authentication_options as $key => $value) {
+    $form['connection'][$key] = array(
+      '#type' => 'textarea',
+      '#title' => t('@name:', array('@name' => $value)),
+      '#default_value' => (isset($loaded_connection[$key])) ? decrypt($loaded_connection[$key]) : NULL,
+      '#description' => t("Enter @name.", array("@name" => $value)),
+      '#size' => 50,
+      '#required' => FALSE,
+      '#states' => array(
+        'visible' => array(
+          ':input[name="connection[authentication_type]"]' => array('value' => $key),
+        ),
+      ),
+    );
+  }
+
+  $form['connection']['remote_directory'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Remote Directory:'),
+    '#default_value' => (isset($loaded_connection['remote_directory'])) ? $loaded_connection['remote_directory'] : NULL,
+    '#description' => t("Enter remote directory path."),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#required' => FALSE,
+  );
+
+  $form['connection']['remote_file_prefix'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Remote File Prefix:'),
+    '#default_value' => (isset($loaded_connection['remote_file_prefix'])) ? $loaded_connection['remote_file_prefix'] : NULL,
+    '#description' => t("Enter remote file prefix."),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#required' => TRUE,
+  );
+
+  $download_type = array(
+    'all' => t('ALL'),
+    'latest' => t('LATEST'),
+  );
+
+  $form['connection']['download_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Download Type:'),
+    '#default_value' => (isset($loaded_connection['download_type'])) ? $loaded_connection['download_type'] : NULL,
+    '#options' => $download_type,
+    '#description' => t('Select the remote file download type.'),
+    '#required' => TRUE,
+  );
+
+  $form['connection']['local_directory'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Local Directory:'),
+    '#default_value' => (isset($loaded_connection['local_directory'])) ? $loaded_connection['local_directory'] : NULL,
+    '#description' => t("Enter local directory that would be created within private:// file path."),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Add',
+  );
+
+  return $form;
+}
+
+function file_transfer_wrapper_config_form_validate($form, &$form_state) {
+  $authentication_type = $form_state['values']['connection']['authentication_type'];
+  if (empty($form_state['values']['connection'][$authentication_type])) {
+    form_set_error('connection][' . $authentication_type, t('@name: field is required.', array('@name' => $authentication_type)));
+  }
+}
+
+function file_transfer_wrapper_config_form_submit($form, &$form_state) {
+
+  foreach ($form['connection']['authentication_type']['#options'] as $key => $value) {
+    if ($form_state['input']['connection']['authentication_type'] != $key) {
+      unset($form_state['values']['connection'][$key]);
+    }
+  }
+
+  $output = t("Form has been submitted.");
+  $connection_settings = variable_get('file_transfer_wrapper_connections', array());
+  $connection_settings[$form_state['values']['connection']['connection_name']] = array(
+    'connection_name' => $form_state['values']['connection']['connection_name'],
+    'connection_library' => $form_state['values']['connection']['connection_library'],
+    'connection_type' => $form_state['input']['connection']['connection_type'],
+    'authentication_type' => $form_state['input']['connection']['authentication_type'],
+    'host' => $form_state['values']['connection']['host'],
+    'port' => $form_state['values']['connection']['port'],
+    'uid' => $form_state['values']['connection']['uid'],
+    'password' => (isset($form_state['values']['connection']['password'])) ? encrypt($form_state['values']['connection']['password']) : NULL,
+    'private_key' => (isset($form_state['values']['connection']['private_key'])) ? encrypt($form_state['values']['connection']['private_key']) : NULL,
+    'remote_directory' => $form_state['values']['connection']['remote_directory'],
+    'remote_file_prefix' => $form_state['values']['connection']['remote_file_prefix'],
+    'download_type' => $form_state['values']['connection']['download_type'],
+    'local_directory' => $form_state['values']['connection']['local_directory'],
+  );
+
+  variable_set('file_transfer_wrapper_connections', $connection_settings);
+  drupal_set_message($output);
+}
+
+function file_transfer_wrapper_delete_connection($conn_name) {
+  $data = variable_get('file_transfer_wrapper_connections');
+  if (isset($data[$conn_name]))
+    unset($data[$conn_name]);
+  variable_set('file_transfer_wrapper_connections', $data);
+}
+
+/**
+ * Validating remote file connections.
+ *
+ * @param type $name
+ */
+function file_transfer_wrapper_test_connection($name) {
+
+  try {
+    $classObj = ftw\FtwConnectionFactory::build($name);
+    $classObj->testConnection();
+    $classObj->closeConnection();
+  }
+  catch (Exception $e) {
+    drupal_set_message($e->getMessage(), 'error');
+  }
+}

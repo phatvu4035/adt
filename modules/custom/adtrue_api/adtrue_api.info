@@ -1,0 +1,6 @@
+name = AdTRUE API Service
+description = Services for the AdTRUE system.
+package = AdTRUE
+dependencies[] = services
+files[] = inc/adtrue_api.inc
+core = 7.x

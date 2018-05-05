@@ -1,0 +1,96 @@
+	<?php
+
+	/*
+	* Implement hook_block_info()
+	*/
+
+	function dashboard_adstrue_block_info() {
+		$blocks = array();
+		$blocks['dashboard_adtrue'] = array(
+			'info' => 'Block in the front page AdTrue',
+		);
+		return $blocks;
+	}
+
+	/*
+	* Implement hook_block_view()
+	*/
+	function dashboard_adstrue_block_view($delta ='') {
+		switch($delta) {
+			case 'dashboard_adtrue':
+
+				$voca = taxonomy_vocabulary_machine_name_load('mac_address');
+	   			$vid = $voca->vid;
+
+	   			$query = db_select('taxonomy_term_data','ttd');
+                $query->fields('ttd',array('tid'));
+                $query->fields('mll',array('field_mac_last_login_value'));
+                $query->fields('ds',array('field_device_status_value'));
+	    		$query->condition('ttd.vid',$vid);
+	    		$query->leftJoin('field_data_field_mac_last_login','mll','mll.entity_id=ttd.tid');
+	    		$query->leftJoin('field_data_field_device_status','ds','ds.entity_id=ttd.tid');
+
+	    		$result = $query->execute();
+	    		$tongso = $result->rowCount();
+
+			    if($tongso) {
+                    $variables  = array();
+                    $online = 0;
+                    $offline = 0;
+                    $dakhoa = 0;
+                    $dakichhoat = 0;
+			        foreach ($result as $row) {
+				        $last_login = isset($row->field_mac_last_login_value) ? $row->field_mac_last_login_value : 0;
+				        if($last_login) {
+			              $curTime = time();
+			              // Thoi gian sau last login 15 phút
+			              $onLog = (int)$last_login + 15*60;
+
+			              if($curTime > $onLog) {
+			                  $offline++;
+			              } else {
+			                 $online++;
+			              }
+				        }
+
+			            $trangthai = isset($row->field_device_status_value) ? $row->field_device_status_value : '';
+			            if($trangthai == 1) {
+			               $dakichhoat++;
+			            } 
+			            if($trangthai == 2) {
+			               $dakhoa++;
+			            } 
+			        }
+
+				}
+
+				$variables['tongso'] = $tongso;
+				$variables['online'] = $online;
+				$variables['offline'] = $offline;
+				$variables['dakhoa'] = $dakhoa;
+				$variables['dakichhoat'] = $dakichhoat;
+
+    			$block['subject'] = '';
+
+    			$build = array(
+				  '#theme' => 'dashboard_adstrue_block',
+				  '#data' => $variables,
+				);
+
+    			$block['content'] = drupal_render($build);
+    			break;
+	}
+	return $block;
+}
+
+
+function dashboard_adstrue_theme($existing, $type, $theme, $path) {
+	return array(
+		'dashboard_adstrue_block' => array(
+			'template' => 'dashboard_adstrue_block',
+			'path' => drupal_get_path('module','dashboard_adstrue').'/templates',
+			'variables' => array('data' => NULL),
+		),
+	);
+}
+

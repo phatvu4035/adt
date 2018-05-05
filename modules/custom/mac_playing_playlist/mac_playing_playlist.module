@@ -1,0 +1,15 @@
+<?php 
+include_once drupal_get_path('module','mac_playing_playlist').'/inc/mac_playing_playlist.inc';
+function mac_playing_playlist_menu() {
+	$tiems = array();
+	$items['mac-playing-playlist'] = array(
+		'title' => 'Thống kê Mac chơi playlist',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('mac_playlist_playing'),
+        'access arguments' => array('access content'),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM
+	);
+	return $items;
+} 
+
